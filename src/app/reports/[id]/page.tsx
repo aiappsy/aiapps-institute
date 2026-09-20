@@ -24,6 +24,7 @@ import {
   Search,
   Zap,
   Check,
+  GitBranch,
 } from "lucide-react";
 import { store } from "@/lib/db/store";
 import { AppraisalReport } from "@/lib/db/types";
@@ -48,6 +49,43 @@ export default function ReportDetailPage() {
   const [simUsers, setSimUsers] = useState(0);
   const [simGrowth, setSimGrowth] = useState(15);
   const [simHourlyRate, setSimHourlyRate] = useState(110);
+
+  // Save as Project & Push to GitHub State
+  const [isSaveProjectModalOpen, setIsSaveProjectModalOpen] = useState(false);
+  const [githubRepoName, setGithubRepoName] = useState("");
+  const [isPrivateRepo, setIsPrivateRepo] = useState(false);
+  const [isPushingProject, setIsPushingProject] = useState(false);
+  const [projectPushResult, setProjectPushResult] = useState<{
+    repoUrl: string;
+    badgeMarkdown: string;
+  } | null>(null);
+
+  const handlePushProjectToGithub = async () => {
+    if (!report) return;
+    setIsPushingProject(true);
+    try {
+      const res = await fetch("/api/export-project", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reportId: report.id,
+          repoName: githubRepoName || `${report.projectName.toLowerCase().replace(/[^a-z0-9]/g, "-")}-audit`,
+          isPrivate: isPrivateRepo,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProjectPushResult({
+          repoUrl: data.repoUrl,
+          badgeMarkdown: data.badgeMarkdown,
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsPushingProject(false);
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -196,6 +234,14 @@ export default function ReportDetailPage() {
             >
               <Award className="w-3.5 h-3.5 text-amber-500" />
               <span>Official Certificate</span>
+            </button>
+
+            <button
+              onClick={() => setIsSaveProjectModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-semibold shadow-xs transition-colors"
+            >
+              <GitBranch className="w-3.5 h-3.5 text-blue-600" />
+              <span>Save & Push to GitHub</span>
             </button>
 
             {report.isListedOnMarketplace ? (
@@ -887,6 +933,164 @@ export default function ReportDetailPage() {
                 {isPublishing ? "Publishing..." : `Confirm & Publish (${selectedBoost === "standard" ? "FREE" : selectedBoost === "featured" ? "$49" : "$99"})`}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save as Project & Push to GitHub Modal */}
+      {isSaveProjectModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <GitBranch className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-lg font-bold text-slate-900 font-serif">
+                    Save as Project & Push to GitHub
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Bundle this certified appraisal into a reproducible GitHub project with markdown audit docs, certificate JSON, and README badges.
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setIsSaveProjectModalOpen(false);
+                  setProjectPushResult(null);
+                }}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            {projectPushResult ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-xs space-y-2">
+                  <div className="font-bold text-emerald-900 flex items-center gap-1.5 text-sm">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Project Successfully Packaged & Linked!</span>
+                  </div>
+                  <p className="text-emerald-800 text-[11px]">
+                    Your certified audit package has been initialized and pushed to GitHub:
+                  </p>
+                  <a
+                    href={projectPushResult.repoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-mono font-bold text-blue-600 hover:underline break-all"
+                  >
+                    <span>{projectPushResult.repoUrl}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <span className="font-bold text-slate-700 block">Embeddable README Accreditation Badge:</span>
+                  <div className="p-2.5 bg-slate-900 text-amber-300 font-mono text-[10px] rounded-lg overflow-x-auto">
+                    <code>{projectPushResult.badgeMarkdown}</code>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setIsSaveProjectModalOpen(false);
+                    setProjectPushResult(null);
+                  }}
+                  className="w-full py-2.5 rounded-lg bg-slate-900 text-white text-xs font-bold shadow hover:bg-slate-800 transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 uppercase mb-1">
+                    GitHub Repository Name
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-mono text-xs">
+                      github.com/aiappsy/
+                    </span>
+                    <input
+                      type="text"
+                      value={githubRepoName}
+                      onChange={(e) => setGithubRepoName(e.target.value)}
+                      placeholder={`${report.projectName.toLowerCase().replace(/[^a-z0-9]/g, "-")}-audit`}
+                      className="w-full pl-38 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                  <span className="font-bold text-slate-800 block text-[11px] uppercase">
+                    Included Project Assets:
+                  </span>
+                  <ul className="space-y-1 text-slate-600 text-[11px]">
+                    <li className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span><code>README.md</code> & <code>AIAPPS-AUDIT.md</code> (Complete diligence dossier)</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span><code>certificate.json</code> (Cryptographic SHA-256 validation seal)</span>
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Turnkey embeddable SVG / Shield badge for repository showcase</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-slate-600">Repository Visibility:</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsPrivateRepo(false)}
+                      className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                        !isPrivateRepo
+                          ? "bg-slate-900 text-white shadow-xs"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      Public
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsPrivateRepo(true)}
+                      className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+                        isPrivateRepo
+                          ? "bg-slate-900 text-white shadow-xs"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      Private
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    disabled={isPushingProject}
+                    onClick={() => setIsSaveProjectModalOpen(false)}
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isPushingProject}
+                    onClick={handlePushProjectToGithub}
+                    className="px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow transition-all disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    <GitBranch className="w-3.5 h-3.5 text-amber-400" />
+                    <span>{isPushingProject ? "Pushing to GitHub..." : "Push Certified Project to GitHub"}</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
