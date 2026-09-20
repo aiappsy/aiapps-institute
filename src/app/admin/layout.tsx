@@ -37,30 +37,48 @@ export default function AdminLayout({
         </div>
 
         {/* Admin Navigation Pills */}
-        <nav className="hidden md:flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold">
+        <nav className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-xs font-semibold overflow-x-auto max-w-2xl py-1">
           <Link
             href="/admin"
-            className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
           >
             Telemetry
           </Link>
           <Link
-            href="/admin/integrations"
-            className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+            href="/admin/listings"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
           >
-            API Credentials
+            Listings Moderation
           </Link>
           <Link
-            href="/admin/parameters"
-            className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+            href="/admin/transactions"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
           >
-            Algorithm Parameters
+            Escrow & Transactions
+          </Link>
+          <Link
+            href="/admin/users"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
+          >
+            Users & KYC
           </Link>
           <Link
             href="/admin/registry"
-            className="px-3 py-1.5 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
           >
-            Certificate Registry
+            Registry
+          </Link>
+          <Link
+            href="/admin/parameters"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
+          >
+            Algorithm Math
+          </Link>
+          <Link
+            href="/admin/integrations"
+            className="px-2.5 py-1 rounded-md hover:bg-slate-800 text-slate-300 hover:text-white transition-colors shrink-0"
+          >
+            API Credentials
           </Link>
         </nav>
 

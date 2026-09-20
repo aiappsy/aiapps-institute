@@ -1,4 +1,4 @@
-import { AppraisalReport, MarketplaceListing, MarketplaceMessage, MarketplaceOffer, PlatformParameters, SignedNDA, UserProfile } from "./types";
+import { AppraisalReport, MarketplaceListing, MarketplaceMessage, MarketplaceOffer, PlatformParameters, SignedNDA, TransactionRecord, UserProfile } from "./types";
 
 const INITIAL_APPRAISALS: AppraisalReport[] = [
   {
@@ -479,6 +479,161 @@ const INITIAL_NDAS: SignedNDA[] = [
   }
 ];
 
+const INITIAL_TRANSACTIONS: TransactionRecord[] = [
+  {
+    id: "tx-901",
+    listingId: "list-101",
+    listingTitle: "NeuralForm AI - Autonomous Form Agent Platform",
+    buyerId: "buyer-alpha",
+    buyerName: "VentureCraft Capital (Sarah Lin)",
+    buyerEmail: "deals@venturecraft.io",
+    sellerId: "user-default",
+    sellerName: "Paul Founder",
+    sellerEmail: "founder@aiappsinstitute.com",
+    grossAmount: 140000,
+    platformFeePercent: 5.0,
+    platformFeeAmount: 7000,
+    netSellerPayout: 133000,
+    status: "INSPECTION_PERIOD",
+    escrowPhase: 2,
+    inspectionDeadline: new Date(Date.now() + 86400000 * 6.5).toISOString(),
+    paymentMethod: "STRIPE_ESCROW",
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    notes: "Phase 1 deposit verified. Git org transfer invite pending buyer acceptance."
+  },
+  {
+    id: "tx-902",
+    listingId: "list-102",
+    listingTitle: "DevPulse MicroMonitor - Edge Worker Daemon",
+    buyerId: "buyer-alpha",
+    buyerName: "Apex Holdings LLC",
+    buyerEmail: "acquisitions@apexholdings.tech",
+    sellerId: "user-dev-2",
+    sellerName: "Elena Rostova",
+    sellerEmail: "elena@devpulse.io",
+    grossAmount: 45000,
+    platformFeePercent: 5.0,
+    platformFeeAmount: 2250,
+    netSellerPayout: 42750,
+    status: "IN_ESCROW",
+    escrowPhase: 1,
+    inspectionDeadline: new Date(Date.now() + 86400000 * 12).toISOString(),
+    paymentMethod: "DIRECT_WIRE",
+    createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+    notes: "Wire received in institute custody vault. Bilateral APA countersigned."
+  },
+  {
+    id: "tx-898",
+    listingId: "list-103",
+    listingTitle: "CloudMetrics MicroTelemetry SDK",
+    buyerId: "buyer-nordic",
+    buyerName: "Nordic Ventures AB",
+    buyerEmail: "invest@nordicventures.se",
+    sellerId: "user-mobile-1",
+    sellerName: "Marcus Thorne",
+    sellerEmail: "marcus@zenithpulse.app",
+    grossAmount: 28000,
+    platformFeePercent: 5.0,
+    platformFeeAmount: 1400,
+    netSellerPayout: 26600,
+    status: "PAYOUT_RELEASED",
+    escrowPhase: 4,
+    inspectionDeadline: new Date(Date.now() - 86400000 * 5).toISOString(),
+    paymentMethod: "STRIPE_ESCROW",
+    createdAt: new Date(Date.now() - 86400000 * 14).toISOString(),
+    disbursedAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+    notes: "Disbursement completed via Stripe Connect. 100% code artifacts verified."
+  }
+];
+
+const INITIAL_USERS: UserProfile[] = [
+  {
+    id: "user-default",
+    email: "founder@aiappsinstitute.com",
+    displayName: "Paul Founder",
+    organization: "Institute Alpha Labs",
+    activeRole: "SELLER",
+    appraisalCredits: 5,
+    isKycVerified: true,
+    isAccreditedBuyer: true,
+    status: "ACTIVE",
+    totalTransactionsVolume: 140000,
+    payoutMethod: {
+      type: "stripe_connect",
+      accountEmail: "founder@aiappsinstitute.com",
+      status: "ACTIVE"
+    },
+    buyerPreferences: {
+      targetBudgetMax: 250000,
+      preferredCategories: ["AI / Machine Learning", "Developer Tool", "SaaS", "Mobile App"],
+      ndaSignedListings: ["list-101"]
+    },
+    createdAt: new Date(Date.now() - 86400000 * 45).toISOString(),
+  },
+  {
+    id: "buyer-alpha",
+    email: "deals@venturecraft.io",
+    displayName: "Sarah Lin",
+    organization: "VentureCraft Capital",
+    activeRole: "BUYER",
+    appraisalCredits: 14,
+    isKycVerified: true,
+    isAccreditedBuyer: true,
+    status: "ACTIVE",
+    totalTransactionsVolume: 420000,
+    buyerPreferences: {
+      targetBudgetMax: 500000,
+      preferredCategories: ["AI / Machine Learning", "Developer Tool", "Fintech"],
+      ndaSignedListings: ["list-101", "list-102"]
+    },
+    createdAt: new Date(Date.now() - 86400000 * 30).toISOString(),
+  },
+  {
+    id: "user-dev-2",
+    email: "elena@devpulse.io",
+    displayName: "Elena Rostova",
+    organization: "DevPulse Systems",
+    activeRole: "SELLER",
+    appraisalCredits: 2,
+    isKycVerified: true,
+    isAccreditedBuyer: false,
+    status: "ACTIVE",
+    totalTransactionsVolume: 45000,
+    payoutMethod: {
+      type: "paypal",
+      accountEmail: "payouts@devpulse.io",
+      status: "ACTIVE"
+    },
+    createdAt: new Date(Date.now() - 86400000 * 20).toISOString(),
+  },
+  {
+    id: "user-broker-1",
+    email: "sterling@apexbrokerage.com",
+    displayName: "David Sterling",
+    organization: "Apex M&A Advisory",
+    activeRole: "ADMIN",
+    appraisalCredits: 25,
+    isKycVerified: true,
+    isAccreditedBuyer: true,
+    status: "ACTIVE",
+    totalTransactionsVolume: 890000,
+    createdAt: new Date(Date.now() - 86400000 * 60).toISOString(),
+  },
+  {
+    id: "user-flagged-demo",
+    email: "spammer@shadow-ops.biz",
+    displayName: "Unknown Script Operator",
+    organization: "Unregistered Entity",
+    activeRole: "SELLER",
+    appraisalCredits: 0,
+    isKycVerified: false,
+    isAccreditedBuyer: false,
+    status: "SUSPENDED",
+    totalTransactionsVolume: 0,
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  }
+];
+
 // Server-side persistent file storage & Firestore sync helpers
 let fsMod: any = null;
 let pathMod: any = null;
@@ -522,6 +677,7 @@ class UniversalDataStore {
   private offers: Map<string, MarketplaceOffer> = new Map();
   private messages: Map<string, MarketplaceMessage> = new Map();
   private ndas: Map<string, SignedNDA> = new Map();
+  private transactions: Map<string, TransactionRecord> = new Map();
   private users: Map<string, UserProfile> = new Map();
   private params: PlatformParameters = {
     seniorHourlyRate: 110,
@@ -540,30 +696,16 @@ class UniversalDataStore {
   constructor() {
     // 1. Initialize default seed data
     INITIAL_APPRAISALS.forEach((appr) => this.appraisals.set(appr.id, appr));
-    INITIAL_LISTINGS.forEach((list) => this.listings.set(list.id, list));
+    INITIAL_LISTINGS.forEach((list) => {
+      // Default moderation status if missing
+      if (!list.moderationStatus) list.moderationStatus = "APPROVED";
+      this.listings.set(list.id, list);
+    });
     INITIAL_OFFERS.forEach((off) => this.offers.set(off.id, off));
     INITIAL_MESSAGES.forEach((m) => this.messages.set(m.id, m));
     INITIAL_NDAS.forEach((n) => this.ndas.set(n.id, n));
-
-    this.users.set("user-default", {
-      id: "user-default",
-      email: "founder@aiappsinstitute.com",
-      displayName: "Paul Founder",
-      organization: "Institute Alpha Labs",
-      activeRole: "SELLER",
-      appraisalCredits: 3,
-      payoutMethod: {
-        type: "stripe_connect",
-        accountEmail: "founder@aiappsinstitute.com",
-        status: "ACTIVE"
-      },
-      buyerPreferences: {
-        targetBudgetMax: 200000,
-        preferredCategories: ["AI / Machine Learning", "Developer Tool", "SaaS", "Mobile App"],
-        ndaSignedListings: ["list-101"]
-      },
-      createdAt: new Date().toISOString(),
-    });
+    INITIAL_TRANSACTIONS.forEach((tx) => this.transactions.set(tx.id, tx));
+    INITIAL_USERS.forEach((u) => this.users.set(u.id, u));
 
     // 2. Hydrate from persistent disk store if on server
     if (typeof window === "undefined" && fsMod && pathMod) {
@@ -576,7 +718,10 @@ class UniversalDataStore {
             parsed.appraisals.forEach((a: AppraisalReport) => this.appraisals.set(a.id, a));
           }
           if (parsed.listings) {
-            parsed.listings.forEach((l: MarketplaceListing) => this.listings.set(l.id, l));
+            parsed.listings.forEach((l: MarketplaceListing) => {
+              if (!l.moderationStatus) l.moderationStatus = "APPROVED";
+              this.listings.set(l.id, l);
+            });
           }
           if (parsed.offers) {
             parsed.offers.forEach((o: MarketplaceOffer) => this.offers.set(o.id, o));
@@ -586,6 +731,9 @@ class UniversalDataStore {
           }
           if (parsed.ndas) {
             parsed.ndas.forEach((n: SignedNDA) => this.ndas.set(n.id, n));
+          }
+          if (parsed.transactions) {
+            parsed.transactions.forEach((t: TransactionRecord) => this.transactions.set(t.id, t));
           }
           if (parsed.users) {
             parsed.users.forEach((u: UserProfile) => this.users.set(u.id, u));
@@ -614,6 +762,7 @@ class UniversalDataStore {
           offers: Array.from(this.offers.values()),
           messages: Array.from(this.messages.values()),
           ndas: Array.from(this.ndas.values()),
+          transactions: Array.from(this.transactions.values()),
           users: Array.from(this.users.values()),
           params: this.params,
         };
@@ -695,6 +844,58 @@ class UniversalDataStore {
     return updated;
   }
 
+  public updateListingModeration(
+    id: string,
+    moderationStatus: MarketplaceListing['moderationStatus'],
+    isFeatured?: boolean
+  ): MarketplaceListing | undefined {
+    const listing = this.listings.get(id);
+    if (!listing) return undefined;
+    if (moderationStatus !== undefined) listing.moderationStatus = moderationStatus;
+    if (isFeatured !== undefined) listing.isFeatured = isFeatured;
+    this.listings.set(id, listing);
+    this.persistDisk();
+    syncFirestoreDocument("marketplace_listings", id, listing);
+    return listing;
+  }
+
+  // Transactions & Escrow Protocol
+  public getAllTransactions(): TransactionRecord[] {
+    return Array.from(this.transactions.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  public getTransactionById(id: string): TransactionRecord | undefined {
+    return this.transactions.get(id);
+  }
+
+  public saveTransaction(tx: TransactionRecord): TransactionRecord {
+    this.transactions.set(tx.id, tx);
+    this.persistDisk();
+    syncFirestoreDocument("transactions", tx.id, tx);
+    return tx;
+  }
+
+  public updateTransactionStatus(
+    id: string,
+    status: TransactionRecord['status'],
+    notes?: string
+  ): TransactionRecord | undefined {
+    const tx = this.transactions.get(id);
+    if (!tx) return undefined;
+    tx.status = status;
+    if (notes) tx.notes = notes;
+    if (status === 'PAYOUT_RELEASED') {
+      tx.disbursedAt = new Date().toISOString();
+      tx.escrowPhase = 4;
+    }
+    this.transactions.set(id, tx);
+    this.persistDisk();
+    syncFirestoreDocument("transactions", id, tx);
+    return tx;
+  }
+
   // Offers
   public getOffersForListing(listingId: string): MarketplaceOffer[] {
     return Array.from(this.offers.values()).filter((o) => o.listingId === listingId);
@@ -760,9 +961,36 @@ class UniversalDataStore {
     return nda;
   }
 
-  // User Profile
+  // User Directory & Profile Management
+  public getAllUsers(): UserProfile[] {
+    return Array.from(this.users.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  public getUserById(id: string): UserProfile | undefined {
+    return this.users.get(id);
+  }
+
+  public saveUser(user: UserProfile): UserProfile {
+    this.users.set(user.id, user);
+    this.persistDisk();
+    syncFirestoreDocument("users", user.id, user);
+    return user;
+  }
+
+  public updateUser(id: string, updates: Partial<UserProfile>): UserProfile | undefined {
+    const existing = this.users.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...updates };
+    this.users.set(id, updated);
+    this.persistDisk();
+    syncFirestoreDocument("users", id, updated);
+    return updated;
+  }
+
   public getCurrentUser(): UserProfile {
-    return this.users.get("user-default")!;
+    return this.users.get("user-default") || Array.from(this.users.values())[0];
   }
 
   public updateUserProfile(updates: Partial<UserProfile>): UserProfile {
@@ -774,8 +1002,8 @@ class UniversalDataStore {
     return updated;
   }
 
-  public updateUserCredits(creditsDelta: number): UserProfile {
-    const user = this.getCurrentUser();
+  public updateUserCredits(creditsDelta: number, targetUserId: string = "user-default"): UserProfile {
+    const user = this.users.get(targetUserId) || this.getCurrentUser();
     user.appraisalCredits = Math.max(0, user.appraisalCredits + creditsDelta);
     this.users.set(user.id, user);
     this.persistDisk();

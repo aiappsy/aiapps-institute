@@ -144,6 +144,8 @@ export interface MarketplaceListing {
   includedAssets: string[];
   
   status: 'ACTIVE' | 'UNDER_OFFER' | 'SOLD' | 'ARCHIVED';
+  moderationStatus?: 'APPROVED' | 'PENDING_REVIEW' | 'FLAGGED' | 'DELISTED';
+  isFeatured?: boolean;
   verifiedCertificateId: string;
   verificationCode: string;
   dealRoomRequestsCount: number;
@@ -191,6 +193,10 @@ export interface UserProfile {
   avatarUrl?: string;
   activeRole: 'APPRAISALS_ONLY' | 'SELLER' | 'BUYER' | 'ADMIN';
   appraisalCredits: number;
+  isKycVerified?: boolean;
+  isAccreditedBuyer?: boolean;
+  status?: 'ACTIVE' | 'SUSPENDED';
+  totalTransactionsVolume?: number;
   payoutMethod?: {
     type: 'stripe_connect' | 'paypal';
     accountEmail: string;
@@ -202,6 +208,29 @@ export interface UserProfile {
     ndaSignedListings: string[];
   };
   createdAt: string;
+}
+
+export interface TransactionRecord {
+  id: string;
+  listingId: string;
+  listingTitle: string;
+  buyerId: string;
+  buyerName: string;
+  buyerEmail: string;
+  sellerId: string;
+  sellerName: string;
+  sellerEmail: string;
+  grossAmount: number;
+  platformFeePercent: number; // 5.0
+  platformFeeAmount: number; // grossAmount * 0.05
+  netSellerPayout: number; // grossAmount * 0.95
+  status: 'IN_ESCROW' | 'INSPECTION_PERIOD' | 'PAYOUT_RELEASED' | 'REFUNDED' | 'DISPUTED';
+  escrowPhase: 1 | 2 | 3 | 4;
+  inspectionDeadline: string;
+  paymentMethod: 'STRIPE_ESCROW' | 'PAYPAL_VAULT' | 'DIRECT_WIRE';
+  createdAt: string;
+  disbursedAt?: string;
+  notes?: string;
 }
 
 export interface PlatformParameters {
