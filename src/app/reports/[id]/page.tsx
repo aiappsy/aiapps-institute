@@ -36,7 +36,7 @@ export default function ReportDetailPage() {
   const id = params?.id as string;
 
   const [report, setReport] = useState<AppraisalReport | null>(null);
-  const [activeTab, setActiveTab] = useState<"summary" | "certificate" | "rebuildLayers" | "marketing" | "competition" | "simulator">("summary");
+  const [activeTab, setActiveTab] = useState<"summary" | "certificate" | "cim" | "rebuildLayers" | "marketing" | "competition" | "simulator">("summary");
   const [isListingModalOpen, setIsListingModalOpen] = useState(false);
   const [askingPrice, setAskingPrice] = useState(0);
   const [selectedBoost, setSelectedBoost] = useState<"standard" | "featured" | "vip">("standard");
@@ -243,6 +243,17 @@ export default function ReportDetailPage() {
           <span>Certificate & QR</span>
         </button>
         <button
+          onClick={() => setActiveTab("cim")}
+          className={`pb-3 border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
+            activeTab === "cim"
+              ? "border-slate-900 text-slate-900 font-bold"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <FileText className="w-4 h-4 text-blue-600" />
+          <span>Executive CIM (Teaser)</span>
+        </button>
+        <button
           onClick={() => setActiveTab("rebuildLayers")}
           className={`pb-3 border-b-2 transition-all flex items-center gap-1.5 shrink-0 ${
             activeTab === "rebuildLayers"
@@ -337,6 +348,191 @@ export default function ReportDetailPage() {
       {/* TAB 2: Certificate */}
       {activeTab === "certificate" && (
         <InstitutionalCertificate report={report} />
+      )}
+
+      {/* TAB 2.5: Confidential Information Memorandum (CIM) */}
+      {activeTab === "cim" && (
+        <div className="bg-white rounded-2xl border-2 border-slate-900 shadow-xl p-6 sm:p-10 space-y-8 print:p-0 print:border-none print:shadow-none">
+          {/* CIM Header */}
+          <div className="border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded bg-slate-900 text-amber-400 text-[10px] font-mono font-bold tracking-wider uppercase">
+                  Confidential Information Memorandum (CIM)
+                </span>
+                <span className="text-xs font-mono text-slate-400">REF: #{report.id}</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900 tracking-tight">
+                {report.projectName} — Acquisition Memo
+              </h2>
+              <p className="text-xs text-slate-500 font-medium">
+                Prepared by AIApps Institute for accredited institutional acquirers & syndicates
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 print:hidden">
+              <button
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow transition-all"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Export / Print CIM (PDF)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 4-Metric Institutional Scorecard */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Certified Valuation</span>
+              <span className="text-2xl font-black text-slate-900 font-serif block mt-1">
+                {formatCurrency(report.valuationFairMarket)}
+              </span>
+              <span className="text-[10px] text-slate-500">Fair Market Benchmark</span>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Rebuild Floor</span>
+              <span className="text-2xl font-black text-slate-800 font-serif block mt-1">
+                {formatCurrency(report.valuationBreakdown.costToRebuild.totalRebuildCost)}
+              </span>
+              <span className="text-[10px] text-slate-500">
+                {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior person-months
+              </span>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Code Health Grade</span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className={`text-xl font-black font-serif px-2 py-0.5 rounded border ${gradeColors.bg} ${gradeColors.text} ${gradeColors.border}`}>
+                  {report.grade}
+                </span>
+                <span className="text-xs font-bold text-slate-700">{report.codeHealth.modularityScore}/100 Modularity</span>
+              </div>
+              <span className="text-[10px] text-slate-500">{report.codeHealth.technicalDebtDiscountPercent}% Tech Debt Discount</span>
+            </div>
+
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <span className="text-[10px] uppercase font-bold text-slate-400 block">Moat Defensibility</span>
+              <span className="text-2xl font-black text-emerald-800 font-serif block mt-1">
+                {report.valuationBreakdown.defensibilityMoatScore}/100
+              </span>
+              <span className="text-[10px] text-emerald-700 font-semibold">Strong IP Protection</span>
+            </div>
+          </div>
+
+          {/* Section 1: Executive Summary & Thesis */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+              1. Executive Summary & Investment Thesis
+            </h3>
+            <p className="text-xs text-slate-700 leading-relaxed font-sans">
+              {report.executiveSummary}
+            </p>
+          </div>
+
+          {/* Section 2: Codebase Replacement Cost & Architecture */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+              2. Technical Architecture & Engineering Replacement Value
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              {report.architectureSummary}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              {report.valuationBreakdown.costToRebuild.layers?.map((layer, idx) => (
+                <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                  <div className="flex justify-between font-bold text-slate-900">
+                    <span>{layer.layerName}</span>
+                    <span className="font-serif">{formatCurrency(layer.cost)}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1">{layer.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Section 3: Marketing Replacement Equity & Traction */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+              3. Marketing Replacement Equity & User Economics
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block">User Base Equity</span>
+                <span className="text-base font-bold text-slate-900 font-serif">
+                  {formatCurrency(report.valuationBreakdown.marketingReplacement.userAcquisitionReplacement)}
+                </span>
+                <span className="text-[10px] text-slate-500 block">{formatNumber(report.registeredUsers)} active users</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block">Organic SEO Equity</span>
+                <span className="text-base font-bold text-slate-900 font-serif">
+                  {formatCurrency(report.valuationBreakdown.marketingReplacement.organicSeoDomainEquity)}
+                </span>
+                <span className="text-[10px] text-slate-500 block">Domain age & backlinks</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block">Monthly Revenue</span>
+                <span className="text-base font-bold text-slate-900 font-serif">
+                  {report.monthlyRecurringRevenue > 0 ? `${formatCurrency(report.monthlyRecurringRevenue)}/mo` : "$0 (Pre-Rev)"}
+                </span>
+                <span className="text-[10px] text-slate-500 block">{report.monthlyGrowthRate}% MoM Growth</span>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block">Total Marketing Value</span>
+                <span className="text-base font-bold text-emerald-800 font-serif">
+                  {formatCurrency(report.valuationBreakdown.marketingReplacement.totalMarketingReplacement)}
+                </span>
+                <span className="text-[10px] text-emerald-700 font-semibold block">Combined Asset Equity</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 4: Acquisition Deliverables & Transition */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+              4. Included Acquisition Assets & Founder Handover
+            </h3>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Full Git Source Code & Intellectual Property Assignment</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Primary Domain Name & DNS Configuration Transfer</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Cloud & Server Hosting Environment (Firebase, Cloud Run, Supabase)</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Stripe / Merchant Processing Account & Customer Records</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>30 Days Direct Founder Transition & Technical Advisory</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Protected by AIApps Institute 5% Escrow & 7-Day Inspection</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* CIM Footer Signoff */}
+          <div className="pt-6 border-t-2 border-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-mono text-slate-500">
+            <div>
+              <span>VERIFICATION CHECKSUM: {report.certificate.sha256Hash}</span>
+              <span className="block text-[10px] text-slate-400 mt-0.5">ISSUED BY AIAPPS INSTITUTE ACCREDITATION BOARD</span>
+            </div>
+            <div className="shrink-0 text-right">
+              <span className="font-bold text-slate-900">ACCREDITATION SEAL: {report.certificate.certificateId}</span>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* TAB 3: Layered Code Rebuild */}

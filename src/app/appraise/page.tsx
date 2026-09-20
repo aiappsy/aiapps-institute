@@ -81,6 +81,10 @@ export default function AppraisePage() {
     codeSnippetOrManifest: "",
   });
 
+  const [githubUrl, setGithubUrl] = useState("");
+  const [isScanningRepo, setIsScanningRepo] = useState(false);
+  const [scannedRepoData, setScannedRepoData] = useState<any>(null);
+
   const toggleTech = (tech: string) => {
     if (formData.techStack.includes(tech)) {
       setFormData({
@@ -92,6 +96,37 @@ export default function AppraisePage() {
         ...formData,
         techStack: [...formData.techStack, tech],
       });
+    }
+  };
+
+  const handleScanRepo = async () => {
+    if (!githubUrl.trim()) return;
+    setIsScanningRepo(true);
+    try {
+      const res = await fetch("/api/scan-repo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repoUrl: githubUrl.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok && data.repo) {
+        setScannedRepoData(data.repo);
+        setFormData((prev) => {
+          const mergedTech = Array.from(new Set([...prev.techStack, ...data.repo.detectedLanguages, data.repo.primaryLanguage])).filter(Boolean);
+          return {
+            ...prev,
+            projectName: prev.projectName || data.repo.name,
+            tagline: prev.tagline || data.repo.description,
+            techStack: mergedTech,
+            repoUrl: githubUrl.trim(),
+            architectureSummary: prev.architectureSummary || `GitHub Repo: ${data.repo.fullName}. Primary: ${data.repo.primaryLanguage}. License: ${data.repo.license}. Estimated LOC: ~${data.repo.estimatedLinesOfCode.toLocaleString()} lines across ${data.repo.detectedLanguages.join(", ")}.`,
+          };
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsScanningRepo(false);
     }
   };
 
@@ -376,6 +411,75 @@ export default function AppraisePage() {
             </div>
 
             <div className="space-y-4">
+              {/* GitHub Repo Scanner Input */}
+              <div className="p-4 rounded-xl border border-slate-200 bg-white shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                    <Code2 className="w-4 h-4 text-slate-700" />
+                    <span>Auto-Scan GitHub Repository (Public or Org Repo)</span>
+                  </label>
+                  <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
+                    Instant AST & LOC Analysis
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={githubUrl}
+                    onChange={(e) => setGithubUrl(e.target.value)}
+                    placeholder="https://github.com/owner/repository"
+                    className="flex-1 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900 text-slate-900 font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleScanRepo}
+                    disabled={isScanningRepo || !githubUrl.trim()}
+                    className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold shadow flex items-center gap-1.5 shrink-0"
+                  >
+                    {isScanningRepo ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Scanning Repo...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Scan Repo</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {scannedRepoData && (
+                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs space-y-2">
+                    <div className="flex items-center justify-between font-bold text-slate-900">
+                      <span>✓ {scannedRepoData.fullName}</span>
+                      <span className="text-[11px] font-mono text-emerald-700">
+                        ~{scannedRepoData.estimatedLinesOfCode.toLocaleString()} LOC Verified
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold">
+                        Primary: {scannedRepoData.primaryLanguage}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-800 font-semibold">
+                        ⭐ {scannedRepoData.stars} Stars
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-semibold">
+                        {scannedRepoData.license}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3 text-slate-300">
+                <div className="flex-1 border-t border-slate-200"></div>
+                <span className="text-[10px] uppercase font-bold text-slate-400">OR UPLOAD MANIFEST</span>
+                <div className="flex-1 border-t border-slate-200"></div>
+              </div>
+
               {/* Drag and drop file ingestion box */}
               <div
                 onDragOver={(e) => e.preventDefault()}

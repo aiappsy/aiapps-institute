@@ -21,6 +21,11 @@ import {
   Unlock,
   Send,
   User,
+  GitBranch,
+  Server,
+  Check,
+  ChevronRight,
+  Shield,
 } from "lucide-react";
 import { store } from "@/lib/db/store";
 import { MarketplaceListing, MarketplaceMessage, MarketplaceOffer } from "@/lib/db/types";
@@ -46,6 +51,26 @@ export default function ListingDetailPage() {
   // Digital NDA State
   const [isNdaSigned, setIsNdaSigned] = useState(false);
   const [isSigningNda, setIsSigningNda] = useState(false);
+
+  // 4-Phase Escrow State
+  const [activeEscrowPhase, setActiveEscrowPhase] = useState<number>(2);
+  const [completedEscrowSteps, setCompletedEscrowSteps] = useState<Record<string, boolean>>({
+    "p1-1": true, // Escrow deposit secured
+    "p1-2": true, // Legal terms ratified
+    "p2-1": true, // GitHub repo invited
+    "p2-2": false, // Admin ownership transferred
+    "p3-1": false, // DNS records pointed
+    "p3-2": false, // Stripe customer tokens migrated
+    "p4-1": false, // Buyer build inspection verified
+    "p4-2": false, // Fund release signed
+  });
+
+  const toggleEscrowStep = (stepId: string) => {
+    setCompletedEscrowSteps((prev) => ({
+      ...prev,
+      [stepId]: !prev[stepId],
+    }));
+  };
 
   useEffect(() => {
     if (id) {
@@ -262,6 +287,244 @@ export default function ListingDetailPage() {
                 </button>
               </div>
             )}
+          </div>
+
+          {/* 4-Phase Digital Asset Escrow & Safe Transfer Protocol Widget */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-subtle space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-emerald-600" />
+                  <h3 className="text-base font-bold text-slate-900 font-serif">
+                    Digital Asset Escrow & Safe Transfer Protocol
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase tracking-wide">
+                    SafeHarbor™ Active
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Non-custodial digital escrow protocol protecting both buyer code inspection rights and seller payout security.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 self-start sm:self-center">
+                <span className="text-[11px] font-semibold text-slate-600">Inspection Window:</span>
+                <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full font-mono text-xs font-bold flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                  6d 18h remaining
+                </span>
+              </div>
+            </div>
+
+            {/* Stepper Navigation */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {[
+                { phase: 1, title: "1. Deposit Secured", icon: DollarSign, status: "COMPLETED" },
+                { phase: 2, title: "2. Git Org Handover", icon: GitBranch, status: "IN_PROGRESS" },
+                { phase: 3, title: "3. DNS & Cloud Infra", icon: Server, status: "PENDING" },
+                { phase: 4, title: "4. 7-Day Inspection", icon: ShieldCheck, status: "PENDING" },
+              ].map((step) => {
+                const isSelected = activeEscrowPhase === step.phase;
+                const Icon = step.icon;
+                return (
+                  <button
+                    key={step.phase}
+                    onClick={() => setActiveEscrowPhase(step.phase)}
+                    className={`text-left p-3 rounded-xl border transition-all text-xs flex flex-col justify-between ${
+                      isSelected
+                        ? "bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/10"
+                        : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-2">
+                      <Icon className={`w-4 h-4 ${isSelected ? "text-amber-400" : "text-slate-500"}`} />
+                      {step.phase === 1 ? (
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isSelected ? "bg-emerald-500/20 text-emerald-300" : "bg-emerald-100 text-emerald-700"}`}>
+                          ✓ Done
+                        </span>
+                      ) : step.phase === 2 ? (
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isSelected ? "bg-amber-400/20 text-amber-300" : "bg-amber-100 text-amber-700"}`}>
+                          Active
+                        </span>
+                      ) : (
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isSelected ? "bg-slate-800 text-slate-400" : "bg-slate-200 text-slate-600"}`}>
+                          Queued
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-bold text-xs">{step.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Selected Phase Detail Card */}
+            <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-4">
+              {activeEscrowPhase === 1 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900">Phase 1: Neutral Escrow Vault Funded</h4>
+                      <p className="text-xs text-slate-600">
+                        {formatCurrency(listing.askingPrice)} held in AIApps Institute bonded vault. Seller cannot withdraw until buyer confirms handover.
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-lg flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Secured
+                    </span>
+                  </div>
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p1-1"]}
+                        onChange={() => toggleEscrowStep("p1-1")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Acquisition funds cleared into neutral escrow vault (Wire / Stripe Verified)</span>
+                    </label>
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p1-2"]}
+                        onChange={() => toggleEscrowStep("p1-2")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Digital Asset Purchase Agreement (APA) countersigned by both legal entities</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {activeEscrowPhase === 2 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900">Phase 2: Codebase & Git Repository Ownership</h4>
+                      <p className="text-xs text-slate-600">
+                        Primary Git organization transfer, private submodules, and full commit lineage handover.
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-lg flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 animate-spin" />
+                      In Progress
+                    </span>
+                  </div>
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p2-1"]}
+                        onChange={() => toggleEscrowStep("p2-1")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Seller issued GitHub / GitLab organization transfer invitation to buyer handle</span>
+                    </label>
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p2-2"]}
+                        onChange={() => toggleEscrowStep("p2-2")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Buyer verified full commit log, tags, and confirmed no proprietary code was redacted</span>
+                    </label>
+                  </div>
+                  <div className="p-3 bg-white rounded-lg border border-slate-200 flex items-center justify-between text-xs">
+                    <span className="text-slate-500 font-mono text-[11px]">Git Handover Target: github.com/ventures/acquisitions</span>
+                    <button
+                      onClick={() => toggleEscrowStep("p2-2")}
+                      className="text-xs font-bold text-slate-900 hover:text-blue-600 flex items-center gap-1"
+                    >
+                      <span>{completedEscrowSteps["p2-2"] ? "Mark Pending" : "Confirm Code Handover"}</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeEscrowPhase === 3 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900">Phase 3: Domain DNS & Cloud Infrastructure Migration</h4>
+                      <p className="text-xs text-slate-600">
+                        Authorization codes, Cloudflare nameservers, Vercel/AWS production keys, and customer databases.
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">
+                      Pending Step 2
+                    </span>
+                  </div>
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p3-1"]}
+                        onChange={() => toggleEscrowStep("p3-1")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Domain EPP authorization code exchanged and DNS nameserver transfer executed</span>
+                    </label>
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p3-2"]}
+                        onChange={() => toggleEscrowStep("p3-2")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Stripe Connect / Payment gateway customer billing tokens securely reassigned</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {activeEscrowPhase === 4 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-sm text-slate-900">Phase 4: 7-Day Technical Inspection & Fund Release</h4>
+                      <p className="text-xs text-slate-600">
+                        Buyer exercises the 7-day inspection guarantee to run local builds, check CI/CD pipelines, and approve release.
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">
+                      Final Hold
+                    </span>
+                  </div>
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p4-1"]}
+                        onChange={() => toggleEscrowStep("p4-1")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Buyer confirmed successful local environment build (`npm run build` / Docker container pass)</span>
+                    </label>
+                    <label className="flex items-center gap-2.5 text-xs text-slate-700 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={completedEscrowSteps["p4-2"]}
+                        onChange={() => toggleEscrowStep("p4-2")}
+                        className="rounded border-slate-300 text-slate-900 focus:ring-slate-900 w-4 h-4"
+                      />
+                      <span>Buyer executed digital disbursement release. Payout dispatched to seller (95% net, 5% fee).</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-slate-200 text-[11px] text-slate-500">
+                <div className="flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Escrow backed by Institute SafeHarbor™ Guarantee (100% Buyer Protection).</span>
+                </div>
+                <div className="font-bold text-slate-700">
+                  Seller Receives: <span className="text-emerald-700 font-mono">{formatCurrency(listing.askingPrice * 0.95)}</span> (5% closing fee)
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Deal Room Direct Q&A Thread Between Buyer & Seller */}
