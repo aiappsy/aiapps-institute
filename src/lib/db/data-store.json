@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updatedAt": "2026-09-20T11:00:10.455Z",
+  "updatedAt": "2026-09-20T13:00:30.849Z",
   "appraisals": [
     {
       "id": "appr-882194",
@@ -403,6 +403,146 @@
       },
       "isListedOnMarketplace": true,
       "marketplaceListingId": "list-103"
+    },
+    {
+      "id": "appr-230617",
+      "createdAt": "2026-09-20T13:00:30.617Z",
+      "updatedAt": "2026-09-20T13:00:30.617Z",
+      "userId": "user-default",
+      "projectName": "AgenticFlow Studio",
+      "tagline": "Autonomous multi-agent orchestration runtime for enterprise workflows",
+      "category": "AI / Machine Learning",
+      "stage": "early-traction",
+      "targetAudience": "Enterprise developers & AI engineering teams",
+      "techStack": [
+        "Next.js 14",
+        "TypeScript",
+        "Python",
+        "FastAPI",
+        "Docker"
+      ],
+      "monthlyRecurringRevenue": 6400,
+      "monthlyGrowthRate": 24.5,
+      "registeredUsers": 3200,
+      "payingUsers": 140,
+      "burnRate": 800,
+      "architectureSummary": "Hexagonal clean architecture with message bus queue and Dockerized isolated workers.",
+      "codeSnippetOrManifest": "FastAPI backend, Next.js 14 App Router frontend, TailwindCSS, PostgreSQL",
+      "grade": "AAA",
+      "valuationLow": 319439,
+      "valuationFairMarket": 380284,
+      "valuationHigh": 456341,
+      "currency": "USD",
+      "codeHealth": {
+        "modularityScore": 88,
+        "testCoverageEstimate": 78,
+        "techStackModernness": 96,
+        "securityVulnerabilityIndex": "Moderate",
+        "dependenciesCount": 20,
+        "maintainabilityIndex": 88,
+        "technicalDebtDiscountPercent": 12
+      },
+      "valuationBreakdown": {
+        "costToRebuild": {
+          "estimatedPersonMonths": 10.5,
+          "hourlySeniorDevRate": 110,
+          "totalRebuildCost": 184800,
+          "breakdownNote": "Benchmarked at 10.5 senior full-stack person-months (1680 hours) at standard institutional $110/hr market engineering compensation.",
+          "layers": [
+            {
+              "layerName": "Frontend Interface & State Management",
+              "personMonths": 3.1,
+              "cost": 55440,
+              "description": "Interactive UI canvas, component architecture, client-side routing, and state stores."
+            },
+            {
+              "layerName": "AI Pipeline & Agent Orchestration",
+              "personMonths": 3.7,
+              "cost": 64680,
+              "description": "Prompt chaining, structured Gemini/LLM streaming, embeddings, and context ingestion."
+            },
+            {
+              "layerName": "Database Schema & Data Migrations",
+              "personMonths": 1.9,
+              "cost": 33264,
+              "description": "Relational/Document schemas, indexing, atomic transactions, and backup routines."
+            },
+            {
+              "layerName": "DevOps, Security & Cloud CI/CD",
+              "personMonths": 1.8,
+              "cost": 31416,
+              "description": "Containerization, automated build workflows, auth verification, and cloud hosting."
+            }
+          ]
+        },
+        "marketingReplacement": {
+          "userAcquisitionReplacement": 102400,
+          "organicSeoDomainEquity": 8500,
+          "waitlistLeadCapitalization": 38400,
+          "communityAssetValue": 5000,
+          "totalMarketingReplacement": 154300,
+          "rationale": "Re-acquiring 3 200 active users at standard industry $32 CAC would cost a buyer $102 400. Domain age, organic search rankings, and community assets add $46 900 in replacement equity."
+        },
+        "competitiveAudit": {
+          "establishedIncumbents": [
+            "Zapier",
+            "Retool",
+            "Typeform",
+            "Salesforce AppExchange"
+          ],
+          "emergingRivals": [
+            "Early Y-Combinator AI Micro-Tools",
+            "Product Hunt Indie Launches"
+          ],
+          "threatLevel": "Moderate",
+          "moatDefensibilityScore": 86,
+          "differentiationAnalysis": "AgenticFlow Studio differentiates via niche specialization in AI / Machine Learning, offering lower friction and higher architectural modularity than legacy incumbents like Zapier, while maintaining deeper IP defensibility than raw wrapper clones."
+        },
+        "marketComps": {
+          "multipleType": "ARR",
+          "multipleValue": 7.3,
+          "marketSegment": "AI / Machine Learning / Verified Software Assets"
+        },
+        "userTractionValue": {
+          "registeredUsers": 3200,
+          "activeUsers": 1920,
+          "payingClients": 140,
+          "estimatedLTV": 549,
+          "userBaseValue": 160090
+        },
+        "defensibilityMoatScore": 86,
+        "riskDiscountFactor": 16
+      },
+      "executiveSummary": "AgenticFlow Studio holds an appraised fair market valuation of $380 284 (AAA Grade), substantiated by $184 800 in software engineering replacement cost, $154 300 in marketing/distribution asset equity, and a strong 88/100 code modularity rating.",
+      "strengths": [
+        "Solid Codebase Replacement Floor: $184 800 across 4 documented architectural layers",
+        "Marketing & GTM Asset Value: $154 300 in verified user acquisition and domain equity",
+        "High Code Modularity Index: 88% with minimal 12% technical debt penalty",
+        "Active validated cash-flow ($6 400/mo) with 7.3x ARR multiple"
+      ],
+      "riskFactors": [
+        "Competitive pressure from established incumbents (Zapier, Retool) requires focused ICP targeting",
+        "Customer concentration risk must be monitored as MRR scales past $19200",
+        "Technical debt deduction of -12% should be resolved during technical transition"
+      ],
+      "strategicRecommendations": [
+        "Package automated end-to-end integration tests to reduce technical debt discount from 6% to under 3%",
+        "Deploy self-serve B2B onboarding flow to monetize existing organic registered user base",
+        "List on the AIApps Exchange with institutional grade certification to attract accredited software buyers"
+      ],
+      "certificate": {
+        "certificateId": "AAI-2026-9091-INST",
+        "sha256Hash": "sha256:e8f9364d0dc39b21a3c748de092b1cf58a6",
+        "qrCodeUrl": "",
+        "verificationUrl": "/verify/AAI-2026-9091-INST",
+        "issuedDate": "2026-09-20",
+        "validThrough": "2027-09-20",
+        "issuer": "AIApps Institute Accreditation Board",
+        "sealType": "Institutional Certified Appraisal",
+        "status": "VERIFIED"
+      },
+      "isListedOnMarketplace": true,
+      "marketplaceListingId": "list-0712"
     }
   ],
   "listings": [
@@ -442,7 +582,8 @@
       "verifiedCertificateId": "AAI-2026-8821-INST",
       "verificationCode": "AAI-2026-8821-INST",
       "dealRoomRequestsCount": 14,
-      "viewsCount": 382
+      "viewsCount": 382,
+      "moderationStatus": "APPROVED"
     },
     {
       "id": "list-102",
@@ -480,7 +621,8 @@
       "verifiedCertificateId": "AAI-2026-4419-INST",
       "verificationCode": "AAI-2026-4419-INST",
       "dealRoomRequestsCount": 9,
-      "viewsCount": 247
+      "viewsCount": 247,
+      "moderationStatus": "APPROVED"
     },
     {
       "id": "list-103",
@@ -518,7 +660,45 @@
       "verifiedCertificateId": "AAI-2026-3190-INST",
       "verificationCode": "AAI-2026-3190-INST",
       "dealRoomRequestsCount": 6,
-      "viewsCount": 189
+      "viewsCount": 189,
+      "moderationStatus": "APPROVED"
+    },
+    {
+      "id": "list-0712",
+      "createdAt": "2026-09-20T13:00:30.712Z",
+      "appraisalId": "appr-230617",
+      "sellerId": "user-default",
+      "sellerName": "Paul Founder",
+      "sellerEmail": "founder@aiappsinstitute.com",
+      "title": "AgenticFlow Studio - Certified Software Asset",
+      "tagline": "Autonomous multi-agent orchestration runtime for enterprise workflows",
+      "description": "AgenticFlow Studio holds an appraised fair market valuation of $380 284 (AAA Grade), substantiated by $184 800 in software engineering replacement cost, $154 300 in marketing/distribution asset equity, and a strong 88/100 code modularity rating. Backed by official AAA Grade AIApps Institute accreditation.",
+      "category": "AI / Machine Learning",
+      "stage": "early-traction",
+      "techStack": [
+        "Next.js 14",
+        "TypeScript",
+        "Python",
+        "FastAPI",
+        "Docker"
+      ],
+      "appraisedFairMarketValue": 380284,
+      "appraisedGrade": "AAA",
+      "askingPrice": 380284,
+      "isNegotiable": true,
+      "monthlyRevenue": 6400,
+      "monthlyUsers": 3200,
+      "includedAssets": [
+        "Complete Source Code & Git Lineage",
+        "Docker Compose & Microservices Stack",
+        "AgenticFlow.ai Domain Name",
+        "140 Paying Customer Contracts"
+      ],
+      "status": "ACTIVE",
+      "verifiedCertificateId": "AAI-2026-9091-INST",
+      "verificationCode": "AAI-2026-9091-INST",
+      "dealRoomRequestsCount": 0,
+      "viewsCount": 1
     }
   ],
   "offers": [
@@ -531,6 +711,17 @@
       "offerAmount": 140000,
       "message": "We reviewed the AIApps Institute AAA Grade appraisal report and would like to move forward under standard 14-day technical due diligence and Stripe escrow.",
       "createdAt": "2026-09-19T11:00:10.440Z",
+      "status": "PENDING"
+    },
+    {
+      "id": "off-0783",
+      "listingId": "list-0712",
+      "buyerId": "current-user",
+      "buyerName": "Summit Peak Capital",
+      "buyerEmail": "deals@summitpeak.vc",
+      "offerAmount": 361270,
+      "message": "We are prepared to acquire immediately subject to 7-day technical code inspection and SafeHarbor escrow.",
+      "createdAt": "2026-09-20T13:00:30.783Z",
       "status": "PENDING"
     }
   ],
@@ -552,6 +743,15 @@
       "senderRole": "SELLER",
       "content": "Yes! It is fully containerized with Docker and terraform scripts. Transfer takes under 30 minutes.",
       "createdAt": "2026-09-19T06:12:10.440Z"
+    },
+    {
+      "id": "msg-0849",
+      "listingId": "list-0712",
+      "senderName": "Summit Peak Capital",
+      "senderEmail": "deals@summitpeak.vc",
+      "senderRole": "BUYER",
+      "content": "Can you confirm if the Dockerized workers support multi-region failover?",
+      "createdAt": "2026-09-20T13:00:30.849Z"
     }
   ],
   "ndas": [
@@ -565,6 +765,72 @@
       "ndaHash": "sha256:nda_902183e9b1029c78"
     }
   ],
+  "transactions": [
+    {
+      "id": "tx-901",
+      "listingId": "list-101",
+      "listingTitle": "NeuralForm AI - Autonomous Form Agent Platform",
+      "buyerId": "buyer-alpha",
+      "buyerName": "VentureCraft Capital (Sarah Lin)",
+      "buyerEmail": "deals@venturecraft.io",
+      "sellerId": "user-default",
+      "sellerName": "Paul Founder",
+      "sellerEmail": "founder@aiappsinstitute.com",
+      "grossAmount": 140000,
+      "platformFeePercent": 5,
+      "platformFeeAmount": 7000,
+      "netSellerPayout": 133000,
+      "status": "INSPECTION_PERIOD",
+      "escrowPhase": 2,
+      "inspectionDeadline": "2026-09-27T00:21:26.805Z",
+      "paymentMethod": "STRIPE_ESCROW",
+      "createdAt": "2026-09-18T12:21:26.805Z",
+      "notes": "Phase 1 deposit verified. Git org transfer invite pending buyer acceptance."
+    },
+    {
+      "id": "tx-902",
+      "listingId": "list-102",
+      "listingTitle": "DevPulse MicroMonitor - Edge Worker Daemon",
+      "buyerId": "buyer-alpha",
+      "buyerName": "Apex Holdings LLC",
+      "buyerEmail": "acquisitions@apexholdings.tech",
+      "sellerId": "user-dev-2",
+      "sellerName": "Elena Rostova",
+      "sellerEmail": "elena@devpulse.io",
+      "grossAmount": 45000,
+      "platformFeePercent": 5,
+      "platformFeeAmount": 2250,
+      "netSellerPayout": 42750,
+      "status": "IN_ESCROW",
+      "escrowPhase": 1,
+      "inspectionDeadline": "2026-10-02T12:21:26.805Z",
+      "paymentMethod": "DIRECT_WIRE",
+      "createdAt": "2026-09-19T12:21:26.805Z",
+      "notes": "Wire received in institute custody vault. Bilateral APA countersigned."
+    },
+    {
+      "id": "tx-898",
+      "listingId": "list-103",
+      "listingTitle": "CloudMetrics MicroTelemetry SDK",
+      "buyerId": "buyer-nordic",
+      "buyerName": "Nordic Ventures AB",
+      "buyerEmail": "invest@nordicventures.se",
+      "sellerId": "user-mobile-1",
+      "sellerName": "Marcus Thorne",
+      "sellerEmail": "marcus@zenithpulse.app",
+      "grossAmount": 28000,
+      "platformFeePercent": 5,
+      "platformFeeAmount": 1400,
+      "netSellerPayout": 26600,
+      "status": "PAYOUT_RELEASED",
+      "escrowPhase": 4,
+      "inspectionDeadline": "2026-09-15T12:21:26.805Z",
+      "paymentMethod": "STRIPE_ESCROW",
+      "createdAt": "2026-09-06T12:21:26.805Z",
+      "disbursedAt": "2026-09-16T12:21:26.805Z",
+      "notes": "Disbursement completed via Stripe Connect. 100% code artifacts verified."
+    }
+  ],
   "users": [
     {
       "id": "user-default",
@@ -572,7 +838,7 @@
       "displayName": "Paul Founder",
       "organization": "Institute Alpha Labs",
       "activeRole": "SELLER",
-      "appraisalCredits": 3,
+      "appraisalCredits": 2,
       "payoutMethod": {
         "type": "stripe_connect",
         "accountEmail": "founder@aiappsinstitute.com",
@@ -591,6 +857,75 @@
         ]
       },
       "createdAt": "2026-09-20T11:00:10.440Z"
+    },
+    {
+      "id": "buyer-alpha",
+      "email": "deals@venturecraft.io",
+      "displayName": "Sarah Lin",
+      "organization": "VentureCraft Capital",
+      "activeRole": "BUYER",
+      "appraisalCredits": 14,
+      "isKycVerified": true,
+      "isAccreditedBuyer": true,
+      "status": "ACTIVE",
+      "totalTransactionsVolume": 420000,
+      "buyerPreferences": {
+        "targetBudgetMax": 500000,
+        "preferredCategories": [
+          "AI / Machine Learning",
+          "Developer Tool",
+          "Fintech"
+        ],
+        "ndaSignedListings": [
+          "list-101",
+          "list-102"
+        ]
+      },
+      "createdAt": "2026-08-21T12:21:26.805Z"
+    },
+    {
+      "id": "user-dev-2",
+      "email": "elena@devpulse.io",
+      "displayName": "Elena Rostova",
+      "organization": "DevPulse Systems",
+      "activeRole": "SELLER",
+      "appraisalCredits": 2,
+      "isKycVerified": true,
+      "isAccreditedBuyer": false,
+      "status": "ACTIVE",
+      "totalTransactionsVolume": 45000,
+      "payoutMethod": {
+        "type": "paypal",
+        "accountEmail": "payouts@devpulse.io",
+        "status": "ACTIVE"
+      },
+      "createdAt": "2026-08-31T12:21:26.805Z"
+    },
+    {
+      "id": "user-broker-1",
+      "email": "sterling@apexbrokerage.com",
+      "displayName": "David Sterling",
+      "organization": "Apex M&A Advisory",
+      "activeRole": "ADMIN",
+      "appraisalCredits": 25,
+      "isKycVerified": true,
+      "isAccreditedBuyer": true,
+      "status": "ACTIVE",
+      "totalTransactionsVolume": 890000,
+      "createdAt": "2026-07-22T12:21:26.805Z"
+    },
+    {
+      "id": "user-flagged-demo",
+      "email": "spammer@shadow-ops.biz",
+      "displayName": "Unknown Script Operator",
+      "organization": "Unregistered Entity",
+      "activeRole": "SELLER",
+      "appraisalCredits": 0,
+      "isKycVerified": false,
+      "isAccreditedBuyer": false,
+      "status": "SUSPENDED",
+      "totalTransactionsVolume": 0,
+      "createdAt": "2026-09-18T12:21:26.805Z"
     }
   ],
   "params": {
