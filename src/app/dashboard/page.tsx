@@ -12,6 +12,7 @@ import {
   ShoppingBag,
   ExternalLink,
   ChevronRight,
+  GitBranch,
 } from "lucide-react";
 import { store } from "@/lib/db/store";
 import { formatCurrency, formatNumber, getGradeBadgeColor } from "@/lib/utils";
@@ -221,8 +222,15 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-4 text-right space-x-2">
                       <Link
+                        href={`/reports/${appr.id}?action=push-github`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors"
+                      >
+                        <GitBranch className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Push to GitHub</span>
+                      </Link>
+                      <Link
                         href={`/reports/${appr.id}`}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs transition-colors"
                       >
                         <FileText className="w-3.5 h-3.5 text-slate-400" />
                         <span>Dossier</span>

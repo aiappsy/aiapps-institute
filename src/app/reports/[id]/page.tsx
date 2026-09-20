@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -34,6 +34,7 @@ import { InstitutionalCertificate } from "@/components/certificate/Institutional
 export default function ReportDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const id = params?.id as string;
 
   const [report, setReport] = useState<AppraisalReport | null>(null);
@@ -99,7 +100,10 @@ export default function ReportDetailPage() {
         setSimHourlyRate(found.valuationBreakdown.costToRebuild.hourlySeniorDevRate || 110);
       }
     }
-  }, [id]);
+    if (searchParams?.get("action") === "push-github") {
+      setIsSaveProjectModalOpen(true);
+    }
+  }, [id, searchParams]);
 
   if (!report) {
     return (
