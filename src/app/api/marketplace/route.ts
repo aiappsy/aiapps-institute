@@ -35,8 +35,9 @@ export async function POST(req: NextRequest) {
       isNegotiable: true,
       monthlyRevenue: appraisal.monthlyRecurringRevenue,
       monthlyUsers: appraisal.registeredUsers,
-      includedAssets: [
+      includedAssets: body.includedAssets && body.includedAssets.length > 0 ? body.includedAssets : [
         "Complete Source Code & Git Repository",
+        "Domain Name & DNS Configuration",
         "Architecture & Deployment Setup Documentation",
         "Institutional Appraisal Certificate & Verification Rights",
         "Customer & User Database (if applicable)",
@@ -52,6 +53,30 @@ export async function POST(req: NextRequest) {
     store.saveListing(newListing);
 
     return NextResponse.json({ success: true, listing: newListing });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { listingId, askingPrice, status } = body;
+
+    if (!listingId) {
+      return NextResponse.json({ error: "listingId is required" }, { status: 400 });
+    }
+
+    const updates: Partial<MarketplaceListing> = {};
+    if (askingPrice !== undefined) updates.askingPrice = Number(askingPrice);
+    if (status) updates.status = status;
+
+    const updated = store.updateListing(listingId, updates);
+    if (!updated) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, listing: updated });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

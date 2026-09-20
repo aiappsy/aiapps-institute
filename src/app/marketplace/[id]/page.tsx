@@ -122,24 +122,26 @@ export default function ListingDetailPage() {
   const handleSubmitOffer = async () => {
     setIsSubmittingOffer(true);
     try {
-      const newOffer: MarketplaceOffer = {
-        id: `off-${Date.now().toString().slice(-4)}`,
-        listingId: listing.id,
-        buyerId: "current-user",
-        buyerName: "Paul Founder",
-        buyerEmail: "founder@aiappsinstitute.com",
-        offerAmount: Number(offerAmount),
-        message: offerMessage || "Formal acquisition offer submitted subject to standard code inspection.",
-        createdAt: new Date().toISOString(),
-        status: "PENDING",
-      };
-      store.saveOffer(newOffer);
-      setOffers([newOffer, ...offers]);
-      setOfferSubmittedSuccess(true);
-      setTimeout(() => {
-        setIsOfferModalOpen(false);
-        setOfferSubmittedSuccess(false);
-      }, 1500);
+      const res = await fetch("/api/offers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listingId: listing.id,
+          buyerName: "Paul Founder",
+          buyerEmail: "founder@aiappsinstitute.com",
+          offerAmount: Number(offerAmount),
+          message: offerMessage || "Formal acquisition offer submitted subject to standard code inspection.",
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.offer) {
+        setOffers([data.offer, ...offers]);
+        setOfferSubmittedSuccess(true);
+        setTimeout(() => {
+          setIsOfferModalOpen(false);
+          setOfferSubmittedSuccess(false);
+        }, 1500);
+      }
     } catch (e) {
       console.error(e);
     } finally {

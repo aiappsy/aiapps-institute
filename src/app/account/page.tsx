@@ -37,25 +37,76 @@ export default function AccountPage() {
   const userListings = listings.filter((l) => l.sellerEmail === user.email);
 
   // Offers on user's listings
-  const incomingOffers = listings.flatMap((l) => store.getOffersForListing(l.id));
+  const [allOffers, setAllOffers] = useState<MarketplaceOffer[]>([]);
+  const [editingPriceListingId, setEditingPriceListingId] = useState<string | null>(null);
+  const [editPriceValue, setEditPriceValue] = useState<number>(0);
+
+  useEffect(() => {
+    const listOffers = listings.flatMap((l) => store.getOffersForListing(l.id));
+    setAllOffers(listOffers);
+  }, []);
+
+  const handleUpdateAskingPrice = async (listingId: string) => {
+    try {
+      const res = await fetch("/api/marketplace", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId, askingPrice: Number(editPriceValue) }),
+      });
+      if (res.ok) {
+        setEditingPriceListingId(null);
+        window.location.reload();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleOfferStatusChange = async (offerId: string, status: "ACCEPTED" | "DECLINED") => {
+    try {
+      const res = await fetch("/api/offers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ offerId, status }),
+      });
+      if (res.ok) {
+        setAllOffers((prev) =>
+          prev.map((o) => (o.id === offerId ? { ...o, status } : o))
+        );
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // Payout state
   const [payoutEmail, setPayoutEmail] = useState(user.payoutMethod?.accountEmail || user.email);
   const [payoutType, setPayoutType] = useState<"stripe_connect" | "paypal">(user.payoutMethod?.type || "stripe_connect");
   const [payoutSaved, setPayoutSaved] = useState(false);
 
-  const handleSavePayout = (e: React.FormEvent) => {
+  const handleSavePayout = async (e: React.FormEvent) => {
     e.preventDefault();
-    const updated = store.updateUserProfile({
-      payoutMethod: {
-        type: payoutType,
-        accountEmail: payoutEmail,
-        status: "ACTIVE",
-      },
-    });
-    setUser(updated);
-    setPayoutSaved(true);
-    setTimeout(() => setPayoutSaved(false), 2500);
+    try {
+      const res = await fetch("/api/account", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          payoutMethod: {
+            type: payoutType,
+            accountEmail: payoutEmail,
+            status: "ACTIVE",
+          },
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        setPayoutSaved(true);
+        setTimeout(() => setPayoutSaved(false), 2500);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const copyEmbedBadge = (appr: AppraisalReport) => {
@@ -272,43 +323,103 @@ export default function AccountPage() {
                     <p className="text-xs text-slate-500">{listing.tagline}</p>
                   </div>
 
-                  <div className="text-left sm:text-right">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Asking Price</span>
-                    <span className="text-2xl font-black text-slate-900 font-serif">{formatCurrency(listing.askingPrice)}</span>
-                    <span className="text-[11px] text-slate-400 block">Appraised: {formatCurrency(listing.appraisedFairMarketValue)}</span>
-                  </div>
-                </div>
-
-                {/* Offer notifications */}
-                <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800">Deal Room Activity & Cash Offers</span>
-                    <span className="text-xs font-semibold text-amber-700">1 Pending Review</span>
-                  </div>
-                  {incomingOffers.map((off) => (
-                    <div
-                      key={off.id}
-                      className="p-3 bg-white rounded border border-slate-200 flex items-center justify-between text-xs"
-                    >
-                      <div>
-                        <div className="font-bold text-slate-900">{off.buyerName}</div>
-                        <div className="text-slate-500">{off.message}</div>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-bold text-sm text-slate-900 font-serif block">{formatCurrency(off.offerAmount)}</span>
-                        <div className="space-x-2 mt-1">
-                          <button className="px-2.5 py-1 rounded bg-emerald-700 text-white text-[10px] font-bold">
-                            Accept
+                    <div className="text-left sm:text-right">
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">Asking Price</span>
+                      {editingPriceListingId === listing.id ? (
+                        <div className="flex items-center gap-2 mt-1">
+                          <input
+                            type="number"
+                            value={editPriceValue}
+                            onChange={(e) => setEditPriceValue(Number(e.target.value))}
+                            className="w-28 px-2 py-1 text-sm font-bold border border-slate-300 rounded"
+                          />
+                          <button
+                            onClick={() => handleUpdateAskingPrice(listing.id)}
+                            className="px-2.5 py-1 rounded bg-emerald-600 text-white text-xs font-bold"
+                          >
+                            Save
                           </button>
-                          <button className="px-2.5 py-1 rounded bg-slate-100 text-slate-700 text-[10px] font-bold">
-                            Counter
+                          <button
+                            onClick={() => setEditingPriceListingId(null)}
+                            className="px-2 py-1 text-xs text-slate-500 hover:text-slate-800"
+                          >
+                            Cancel
                           </button>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="flex items-center sm:justify-end gap-2">
+                          <span className="text-2xl font-black text-slate-900 font-serif">{formatCurrency(listing.askingPrice)}</span>
+                          <button
+                            onClick={() => {
+                              setEditingPriceListingId(listing.id);
+                              setEditPriceValue(listing.askingPrice);
+                            }}
+                            className="text-[10px] text-blue-600 hover:underline font-semibold"
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                      <span className="text-[11px] text-slate-400 block">Appraised: {formatCurrency(listing.appraisedFairMarketValue)}</span>
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Offer notifications */}
+                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-800">Deal Room Activity & Cash Offers</span>
+                      <span className="text-xs font-semibold text-slate-600">
+                        {allOffers.filter((o) => o.listingId === listing.id).length} Total Offers
+                      </span>
+                    </div>
+                    {allOffers
+                      .filter((o) => o.listingId === listing.id)
+                      .map((off) => (
+                        <div
+                          key={off.id}
+                          className="p-3 bg-white rounded border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+                        >
+                          <div>
+                            <div className="font-bold text-slate-900 flex items-center gap-2">
+                              <span>{off.buyerName}</span>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                off.status === "ACCEPTED"
+                                  ? "bg-emerald-100 text-emerald-800"
+                                  : off.status === "DECLINED"
+                                  ? "bg-rose-100 text-rose-800"
+                                  : "bg-amber-100 text-amber-800"
+                              }`}>
+                                {off.status}
+                              </span>
+                            </div>
+                            <div className="text-slate-500 text-[11px] mt-0.5">{off.message}</div>
+                          </div>
+                          <div className="text-left sm:text-right shrink-0">
+                            <span className="font-bold text-sm text-slate-900 font-serif block">{formatCurrency(off.offerAmount)}</span>
+                            {off.status === "PENDING" && (
+                              <div className="space-x-2 mt-1">
+                                <button
+                                  onClick={() => handleOfferStatusChange(off.id, "ACCEPTED")}
+                                  className="px-2.5 py-1 rounded bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold transition-colors"
+                                >
+                                  Accept Offer
+                                </button>
+                                <button
+                                  onClick={() => handleOfferStatusChange(off.id, "DECLINED")}
+                                  className="px-2.5 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-[10px] font-bold transition-colors"
+                                >
+                                  Decline
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    {allOffers.filter((o) => o.listingId === listing.id).length === 0 && (
+                      <p className="text-xs text-slate-400 py-1 italic">No offers received yet. Your listing is live and visible to all verified buyers.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
             ))}
           </div>
         </div>

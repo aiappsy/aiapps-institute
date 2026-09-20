@@ -479,6 +479,43 @@ const INITIAL_NDAS: SignedNDA[] = [
   }
 ];
 
+// Server-side persistent file storage & Firestore sync helpers
+let fsMod: any = null;
+let pathMod: any = null;
+if (typeof window === "undefined") {
+  try {
+    fsMod = require("fs");
+    pathMod = require("path");
+  } catch (e) {
+    // browser or worker environment
+  }
+}
+
+// Lazy-load adminDb to avoid bundling issues in client components
+function getFirestoreDb() {
+  if (typeof window === "undefined" && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+    try {
+      const { adminDb } = require("@/lib/firebase/admin");
+      return adminDb;
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
+
+async function syncFirestoreDocument(collection: string, id: string, data: any) {
+  try {
+    const db = getFirestoreDb();
+    if (db) {
+      await db.collection(collection).doc(id).set(JSON.parse(JSON.stringify(data)), { merge: true });
+    }
+  } catch (err) {
+    // Non-blocking fallback warning
+    console.warn(`[Firestore Sync Warning] collection=${collection} id=${id}:`, err);
+  }
+}
+
 class UniversalDataStore {
   private appraisals: Map<string, AppraisalReport> = new Map();
   private listings: Map<string, MarketplaceListing> = new Map();
@@ -498,7 +535,10 @@ class UniversalDataStore {
     platformTakeRatePercent: 5.0,
   };
 
+  private storageFilePath: string | null = null;
+
   constructor() {
+    // 1. Initialize default seed data
     INITIAL_APPRAISALS.forEach((appr) => this.appraisals.set(appr.id, appr));
     INITIAL_LISTINGS.forEach((list) => this.listings.set(list.id, list));
     INITIAL_OFFERS.forEach((off) => this.offers.set(off.id, off));
@@ -524,6 +564,64 @@ class UniversalDataStore {
       },
       createdAt: new Date().toISOString(),
     });
+
+    // 2. Hydrate from persistent disk store if on server
+    if (typeof window === "undefined" && fsMod && pathMod) {
+      try {
+        this.storageFilePath = pathMod.join(process.cwd(), "src", "lib", "db", "data-store.json");
+        if (fsMod.existsSync(this.storageFilePath)) {
+          const raw = fsMod.readFileSync(this.storageFilePath, "utf-8");
+          const parsed = JSON.parse(raw);
+          if (parsed.appraisals) {
+            parsed.appraisals.forEach((a: AppraisalReport) => this.appraisals.set(a.id, a));
+          }
+          if (parsed.listings) {
+            parsed.listings.forEach((l: MarketplaceListing) => this.listings.set(l.id, l));
+          }
+          if (parsed.offers) {
+            parsed.offers.forEach((o: MarketplaceOffer) => this.offers.set(o.id, o));
+          }
+          if (parsed.messages) {
+            parsed.messages.forEach((m: MarketplaceMessage) => this.messages.set(m.id, m));
+          }
+          if (parsed.ndas) {
+            parsed.ndas.forEach((n: SignedNDA) => this.ndas.set(n.id, n));
+          }
+          if (parsed.users) {
+            parsed.users.forEach((u: UserProfile) => this.users.set(u.id, u));
+          }
+          if (parsed.params) {
+            this.params = { ...this.params, ...parsed.params };
+          }
+        } else {
+          // Create initial file
+          this.persistDisk();
+        }
+      } catch (err) {
+        console.warn("[DataStore] Hydration warning:", err);
+      }
+    }
+  }
+
+  private persistDisk() {
+    if (typeof window === "undefined" && fsMod && this.storageFilePath) {
+      try {
+        const payload = {
+          version: "1.0",
+          updatedAt: new Date().toISOString(),
+          appraisals: Array.from(this.appraisals.values()),
+          listings: Array.from(this.listings.values()),
+          offers: Array.from(this.offers.values()),
+          messages: Array.from(this.messages.values()),
+          ndas: Array.from(this.ndas.values()),
+          users: Array.from(this.users.values()),
+          params: this.params,
+        };
+        fsMod.writeFileSync(this.storageFilePath, JSON.stringify(payload, null, 2), "utf-8");
+      } catch (err) {
+        console.error("[DataStore] Failed to write to disk:", err);
+      }
+    }
   }
 
   // Appraisals
@@ -545,6 +643,8 @@ class UniversalDataStore {
 
   public saveAppraisal(report: AppraisalReport): AppraisalReport {
     this.appraisals.set(report.id, report);
+    this.persistDisk();
+    syncFirestoreDocument("appraisals", report.id, report);
     return report;
   }
 
@@ -553,6 +653,8 @@ class UniversalDataStore {
     if (appr) {
       appr.certificate.status = status;
       this.appraisals.set(appr.id, appr);
+      this.persistDisk();
+      syncFirestoreDocument("appraisals", appr.id, appr);
       return true;
     }
     return false;
@@ -576,8 +678,21 @@ class UniversalDataStore {
       appr.isListedOnMarketplace = true;
       appr.marketplaceListingId = listing.id;
       this.appraisals.set(appr.id, appr);
+      syncFirestoreDocument("appraisals", appr.id, appr);
     }
+    this.persistDisk();
+    syncFirestoreDocument("marketplace_listings", listing.id, listing);
     return listing;
+  }
+
+  public updateListing(id: string, updates: Partial<MarketplaceListing>): MarketplaceListing | undefined {
+    const existing = this.listings.get(id);
+    if (!existing) return undefined;
+    const updated = { ...existing, ...updates };
+    this.listings.set(id, updated);
+    this.persistDisk();
+    syncFirestoreDocument("marketplace_listings", id, updated);
+    return updated;
   }
 
   // Offers
@@ -587,6 +702,18 @@ class UniversalDataStore {
 
   public saveOffer(offer: MarketplaceOffer): MarketplaceOffer {
     this.offers.set(offer.id, offer);
+    this.persistDisk();
+    syncFirestoreDocument("offers", offer.id, offer);
+    return offer;
+  }
+
+  public updateOfferStatus(offerId: string, status: 'ACCEPTED' | 'DECLINED' | 'COUNTERED'): MarketplaceOffer | undefined {
+    const offer = this.offers.get(offerId);
+    if (!offer) return undefined;
+    offer.status = status;
+    this.offers.set(offerId, offer);
+    this.persistDisk();
+    syncFirestoreDocument("offers", offerId, offer);
     return offer;
   }
 
@@ -599,6 +726,8 @@ class UniversalDataStore {
 
   public saveMessage(message: MarketplaceMessage): MarketplaceMessage {
     this.messages.set(message.id, message);
+    this.persistDisk();
+    syncFirestoreDocument("messages", message.id, message);
     return message;
   }
 
@@ -626,6 +755,8 @@ class UniversalDataStore {
         user.buyerPreferences.ndaSignedListings.push(listingId);
       }
     }
+    this.persistDisk();
+    syncFirestoreDocument("signed_ndas", nda.id, nda);
     return nda;
   }
 
@@ -638,6 +769,8 @@ class UniversalDataStore {
     const current = this.getCurrentUser();
     const updated = { ...current, ...updates };
     this.users.set("user-default", updated);
+    this.persistDisk();
+    syncFirestoreDocument("users", "user-default", updated);
     return updated;
   }
 
@@ -645,6 +778,8 @@ class UniversalDataStore {
     const user = this.getCurrentUser();
     user.appraisalCredits = Math.max(0, user.appraisalCredits + creditsDelta);
     this.users.set(user.id, user);
+    this.persistDisk();
+    syncFirestoreDocument("users", user.id, user);
     return user;
   }
 
@@ -655,6 +790,8 @@ class UniversalDataStore {
 
   public updateParameters(newParams: Partial<PlatformParameters>): PlatformParameters {
     this.params = { ...this.params, ...newParams };
+    this.persistDisk();
+    syncFirestoreDocument("platform_settings", "parameters", this.params);
     return this.params;
   }
 }
