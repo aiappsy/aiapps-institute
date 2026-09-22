@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "updatedAt": "2026-09-20T13:00:30.849Z",
+  "updatedAt": "2026-09-22T00:04:49.495Z",
   "appraisals": [
     {
       "id": "appr-882194",
@@ -543,6 +543,286 @@
       },
       "isListedOnMarketplace": true,
       "marketplaceListingId": "list-0712"
+    },
+    {
+      "id": "appr-193972",
+      "createdAt": "2026-09-21T23:59:53.972Z",
+      "updatedAt": "2026-09-21T23:59:53.972Z",
+      "userId": "user-default",
+      "projectName": "atlastravelclub.com",
+      "tagline": "an international travel club",
+      "category": "SaaS",
+      "stage": "mvp",
+      "targetAudience": "travelers",
+      "techStack": [
+        "Next.js 14",
+        "TypeScript",
+        "Tailwind CSS"
+      ],
+      "pricingModel": "Subscription",
+      "monthlyRecurringRevenue": 0,
+      "monthlyGrowthRate": 15,
+      "registeredUsers": 0,
+      "payingUsers": 0,
+      "burnRate": 50,
+      "repoUrl": "https://github.com/aiappsy/atlas-travel-club.git",
+      "architectureSummary": "using google ecosystems, gemini, hosting etc.",
+      "codeSnippetOrManifest": "",
+      "grade": "AA",
+      "valuationLow": 75586,
+      "valuationFairMarket": 89983,
+      "valuationHigh": 107980,
+      "currency": "USD",
+      "codeHealth": {
+        "modularityScore": 88,
+        "testCoverageEstimate": 78,
+        "techStackModernness": 96,
+        "securityVulnerabilityIndex": "Moderate",
+        "dependenciesCount": 12,
+        "maintainabilityIndex": 88,
+        "technicalDebtDiscountPercent": 12
+      },
+      "valuationBreakdown": {
+        "costToRebuild": {
+          "estimatedPersonMonths": 5.6,
+          "hourlySeniorDevRate": 110,
+          "totalRebuildCost": 98560,
+          "breakdownNote": "Benchmarked at 5.6 senior full-stack person-months (896 hours) at standard institutional $110/hr market engineering compensation.",
+          "layers": [
+            {
+              "layerName": "Frontend Interface & State Management",
+              "personMonths": 1.7,
+              "cost": 29568,
+              "description": "Interactive UI canvas, component architecture, client-side routing, and state stores."
+            },
+            {
+              "layerName": "Backend Business Logic & APIs",
+              "personMonths": 2,
+              "cost": 34496,
+              "description": "REST/GraphQL endpoints, core domain models, and service layer."
+            },
+            {
+              "layerName": "Database Schema & Data Migrations",
+              "personMonths": 1,
+              "cost": 17741,
+              "description": "Relational/Document schemas, indexing, atomic transactions, and backup routines."
+            },
+            {
+              "layerName": "DevOps, Security & Cloud CI/CD",
+              "personMonths": 1,
+              "cost": 16755,
+              "description": "Containerization, automated build workflows, auth verification, and cloud hosting."
+            }
+          ]
+        },
+        "marketingReplacement": {
+          "userAcquisitionReplacement": 0,
+          "organicSeoDomainEquity": 3500,
+          "waitlistLeadCapitalization": 0,
+          "communityAssetValue": 1500,
+          "totalMarketingReplacement": 5000,
+          "rationale": "Re-acquiring 0 active users at standard industry $22 CAC would cost a buyer $0. Domain age, organic search rankings, and community assets add $3 500 in replacement equity."
+        },
+        "competitiveAudit": {
+          "establishedIncumbents": [
+            "Zapier",
+            "Retool",
+            "Typeform",
+            "Salesforce AppExchange"
+          ],
+          "emergingRivals": [
+            "Early Y-Combinator AI Micro-Tools",
+            "Product Hunt Indie Launches"
+          ],
+          "threatLevel": "Low",
+          "moatDefensibilityScore": 80,
+          "differentiationAnalysis": "atlastravelclub.com differentiates via niche specialization in SaaS, offering lower friction and higher architectural modularity than legacy incumbents like Zapier, while maintaining deeper IP defensibility than raw wrapper clones."
+        },
+        "marketComps": {
+          "multipleType": "AssetReplacement",
+          "multipleValue": 1,
+          "marketSegment": "SaaS / Verified Software Assets"
+        },
+        "userTractionValue": {
+          "registeredUsers": 0,
+          "activeUsers": 0,
+          "payingClients": 0,
+          "estimatedLTV": 45,
+          "userBaseValue": 0
+        },
+        "defensibilityMoatScore": 80,
+        "riskDiscountFactor": 16
+      },
+      "executiveSummary": "atlastravelclub.com holds an appraised fair market valuation of $89 983 (AA Grade), substantiated by $98 560 in software engineering replacement cost, $5 000 in marketing/distribution asset equity, and a strong 88/100 code modularity rating.",
+      "strengths": [
+        "Solid Codebase Replacement Floor: $98 560 across 4 documented architectural layers",
+        "Marketing & GTM Asset Value: $5 000 in verified user acquisition and domain equity",
+        "High Code Modularity Index: 88% with minimal 12% technical debt penalty",
+        "Pre-revenue organic traction of 0 registered users reduces buyer launch risk"
+      ],
+      "riskFactors": [
+        "Competitive pressure from established incumbents (Zapier, Retool) requires focused ICP targeting",
+        "Absence of active subscription revenue places higher weight on engineering and user asset replacement",
+        "Technical debt deduction of -12% should be resolved during technical transition"
+      ],
+      "strategicRecommendations": [
+        "Package automated end-to-end integration tests to reduce technical debt discount from 6% to under 3%",
+        "Deploy self-serve B2B onboarding flow to monetize existing organic registered user base",
+        "List on the AIApps Exchange with institutional grade certification to attract accredited software buyers"
+      ],
+      "certificate": {
+        "certificateId": "AAI-2026-7248-INST",
+        "sha256Hash": "sha256:e8f96dee703a9b21a3c748de092b1cf58a6",
+        "qrCodeUrl": "",
+        "verificationUrl": "/verify/AAI-2026-7248-INST",
+        "issuedDate": "2026-09-21",
+        "validThrough": "2027-09-21",
+        "issuer": "AIApps Institute Accreditation Board",
+        "sealType": "Institutional Certified Appraisal",
+        "status": "VERIFIED"
+      }
+    },
+    {
+      "id": "appr-489494",
+      "createdAt": "2026-09-22T00:04:49.494Z",
+      "updatedAt": "2026-09-22T00:04:49.494Z",
+      "userId": "user-default",
+      "projectName": "Aiapps Institute",
+      "tagline": "Accredited AI-driven code audit, valuation certification, and verified software asset exchange.",
+      "category": "AI / Machine Learning",
+      "stage": "early-traction",
+      "targetAudience": "B2B and digital software users",
+      "techStack": [
+        "Next.js 14",
+        "React",
+        "Tailwind CSS",
+        "TypeScript",
+        "Gemini 3.8 Flash",
+        "Firebase",
+        "Stripe Payments"
+      ],
+      "pricingModel": "Subscription",
+      "monthlyRecurringRevenue": 450,
+      "monthlyGrowthRate": 15,
+      "registeredUsers": 380,
+      "payingUsers": 9,
+      "burnRate": 85,
+      "repoUrl": "https://github.com/aiappsy/aiapps-institute",
+      "architectureSummary": "Production AI / Machine Learning repository (aiappsy/aiapps-institute) written in TypeScript. Stack comprises Next.js 14, React, Tailwind CSS, TypeScript, Gemini 3.8 Flash, Firebase, Stripe Payments. Codebase consists of ~99 files and an estimated 13 961 lines of code. Light test footprint. Live deployment hosted on Cloud Infrastructure with standard HTTP. Average edge response time: 708ms.",
+      "codeSnippetOrManifest": "package.json [aiapps-institute]: 24 dependencies. Scripts: dev, build, start, lint",
+      "grade": "AA",
+      "valuationLow": 62675,
+      "valuationFairMarket": 74613,
+      "valuationHigh": 89536,
+      "currency": "USD",
+      "codeHealth": {
+        "modularityScore": 98,
+        "testCoverageEstimate": 78,
+        "techStackModernness": 96,
+        "securityVulnerabilityIndex": "Low",
+        "dependenciesCount": 28,
+        "maintainabilityIndex": 93,
+        "technicalDebtDiscountPercent": 7
+      },
+      "valuationBreakdown": {
+        "costToRebuild": {
+          "estimatedPersonMonths": 10.6,
+          "hourlySeniorDevRate": 110,
+          "totalRebuildCost": 186560,
+          "breakdownNote": "Benchmarked at 10.6 senior full-stack person-months (1696 hours) at standard institutional $110/hr market engineering compensation.",
+          "layers": [
+            {
+              "layerName": "Frontend Interface & State Management",
+              "personMonths": 3.2,
+              "cost": 55968,
+              "description": "Interactive UI canvas, component architecture, client-side routing, and state stores."
+            },
+            {
+              "layerName": "AI Pipeline & Agent Orchestration",
+              "personMonths": 3.7,
+              "cost": 65296,
+              "description": "Prompt chaining, structured Gemini/LLM streaming, embeddings, and context ingestion."
+            },
+            {
+              "layerName": "Database Schema & Data Migrations",
+              "personMonths": 1.9,
+              "cost": 33581,
+              "description": "Relational/Document schemas, indexing, atomic transactions, and backup routines."
+            },
+            {
+              "layerName": "DevOps, Security & Cloud CI/CD",
+              "personMonths": 1.8,
+              "cost": 31715,
+              "description": "Containerization, automated build workflows, auth verification, and cloud hosting."
+            }
+          ]
+        },
+        "marketingReplacement": {
+          "userAcquisitionReplacement": 12160,
+          "organicSeoDomainEquity": 3500,
+          "waitlistLeadCapitalization": 4560,
+          "communityAssetValue": 1500,
+          "totalMarketingReplacement": 21720,
+          "rationale": "Re-acquiring 380 active users at standard industry $32 CAC would cost a buyer $12 160. Domain age, organic search rankings, and community assets add $8 060 in replacement equity."
+        },
+        "competitiveAudit": {
+          "establishedIncumbents": [
+            "Zapier",
+            "Retool",
+            "Typeform",
+            "Salesforce AppExchange"
+          ],
+          "emergingRivals": [
+            "Early Y-Combinator AI Micro-Tools",
+            "Product Hunt Indie Launches"
+          ],
+          "threatLevel": "Moderate",
+          "moatDefensibilityScore": 80,
+          "differentiationAnalysis": "Aiapps Institute differentiates via niche specialization in AI / Machine Learning, offering lower friction and higher architectural modularity than legacy incumbents like Zapier, while maintaining deeper IP defensibility than raw wrapper clones."
+        },
+        "marketComps": {
+          "multipleType": "ARR",
+          "multipleValue": 6.5,
+          "marketSegment": "AI / Machine Learning / Verified Software Assets"
+        },
+        "userTractionValue": {
+          "registeredUsers": 380,
+          "activeUsers": 228,
+          "payingClients": 9,
+          "estimatedLTV": 600,
+          "userBaseValue": 13420
+        },
+        "defensibilityMoatScore": 80,
+        "riskDiscountFactor": 11
+      },
+      "executiveSummary": "Aiapps Institute holds an appraised fair market valuation of $74 613 (AA Grade), substantiated by $186 560 in software engineering replacement cost, $21 720 in marketing/distribution asset equity, and a strong 98/100 code modularity rating.",
+      "strengths": [
+        "Solid Codebase Replacement Floor: $186 560 across 4 documented architectural layers",
+        "Marketing & GTM Asset Value: $21 720 in verified user acquisition and domain equity",
+        "High Code Modularity Index: 98% with minimal 7% technical debt penalty",
+        "Active validated cash-flow ($450/mo) with 6.5x ARR multiple"
+      ],
+      "riskFactors": [
+        "Competitive pressure from established incumbents (Zapier, Retool) requires focused ICP targeting",
+        "Customer concentration risk must be monitored as MRR scales past $1350",
+        "Technical debt deduction of -7% should be resolved during technical transition"
+      ],
+      "strategicRecommendations": [
+        "Package automated end-to-end integration tests to reduce technical debt discount from 6% to under 3%",
+        "Deploy self-serve B2B onboarding flow to monetize existing organic registered user base",
+        "List on the AIApps Exchange with institutional grade certification to attract accredited software buyers"
+      ],
+      "certificate": {
+        "certificateId": "AAI-2026-1797-INST",
+        "sha256Hash": "sha256:e8f9592983f89b21a3c748de092b1cf58a6",
+        "qrCodeUrl": "",
+        "verificationUrl": "/verify/AAI-2026-1797-INST",
+        "issuedDate": "2026-09-22",
+        "validThrough": "2027-09-22",
+        "issuer": "AIApps Institute Accreditation Board",
+        "sealType": "Institutional Certified Appraisal",
+        "status": "VERIFIED"
+      }
     }
   ],
   "listings": [
@@ -698,7 +978,8 @@
       "verifiedCertificateId": "AAI-2026-9091-INST",
       "verificationCode": "AAI-2026-9091-INST",
       "dealRoomRequestsCount": 0,
-      "viewsCount": 1
+      "viewsCount": 1,
+      "moderationStatus": "APPROVED"
     }
   ],
   "offers": [
@@ -838,7 +1119,7 @@
       "displayName": "Paul Founder",
       "organization": "Institute Alpha Labs",
       "activeRole": "SELLER",
-      "appraisalCredits": 2,
+      "appraisalCredits": 0,
       "payoutMethod": {
         "type": "stripe_connect",
         "accountEmail": "founder@aiappsinstitute.com",

@@ -25,16 +25,39 @@ export default function PublicVerifyPage() {
   const certId = params?.certId as string;
 
   const [report, setReport] = useState<AppraisalReport | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (certId) {
-      const found = store.getAppraisalByCertificateId(certId);
-      if (found) {
-        setReport(found);
-      }
+    let isMounted = true;
+    if (!certId) return;
+
+    const found = store.getAppraisalByCertificateId(certId);
+    if (found) {
+      setReport(found);
+      setIsLoading(false);
     }
+
+    fetch(`/api/appraisals?certId=${encodeURIComponent(certId)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        if (data.success && data.report) {
+          store.saveAppraisal(data.report);
+          setReport(data.report);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to verify certificate from server:", err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [certId]);
 
   const handleSearch = (e: React.FormEvent) => {

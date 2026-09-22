@@ -38,6 +38,7 @@ export default function ReportDetailPage() {
   const id = params?.id as string;
 
   const [report, setReport] = useState<AppraisalReport | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"summary" | "certificate" | "cim" | "rebuildLayers" | "marketing" | "competition" | "simulator">("summary");
   const [isListingModalOpen, setIsListingModalOpen] = useState(false);
   const [askingPrice, setAskingPrice] = useState(0);
@@ -89,21 +90,60 @@ export default function ReportDetailPage() {
   };
 
   useEffect(() => {
-    if (id) {
-      const found = store.getAppraisalById(id);
-      if (found) {
-        setReport(found);
-        setAskingPrice(found.valuationFairMarket);
-        setSimMrr(found.monthlyRecurringRevenue);
-        setSimUsers(found.registeredUsers);
-        setSimGrowth(found.monthlyGrowthRate);
-        setSimHourlyRate(found.valuationBreakdown.costToRebuild.hourlySeniorDevRate || 110);
-      }
+    let isMounted = true;
+    if (!id) return;
+
+    // 1. Instant check in client store
+    const found = store.getAppraisalById(id);
+    if (found) {
+      setReport(found);
+      setAskingPrice(found.valuationFairMarket);
+      setSimMrr(found.monthlyRecurringRevenue);
+      setSimUsers(found.registeredUsers);
+      setSimGrowth(found.monthlyGrowthRate);
+      setSimHourlyRate(found.valuationBreakdown.costToRebuild.hourlySeniorDevRate || 110);
+      setIsLoading(false);
     }
+
+    // 2. Hydrate from server-persisted storage via API
+    fetch(`/api/appraisals/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (!isMounted) return;
+        if (data.success && data.report) {
+          store.saveAppraisal(data.report);
+          setReport(data.report);
+          setAskingPrice(data.report.valuationFairMarket);
+          setSimMrr(data.report.monthlyRecurringRevenue);
+          setSimUsers(data.report.registeredUsers);
+          setSimGrowth(data.report.monthlyGrowthRate);
+          setSimHourlyRate(data.report.valuationBreakdown.costToRebuild.hourlySeniorDevRate || 110);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch appraisal from server:", err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
     if (searchParams?.get("action") === "push-github") {
       setIsSaveProjectModalOpen(true);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [id, searchParams]);
+
+  if (isLoading && !report) {
+    return (
+      <div className="text-center py-24 space-y-4">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-slate-900 rounded-full animate-spin mx-auto"></div>
+        <p className="text-sm font-medium text-slate-600">Retrieving certified appraisal dossier...</p>
+      </div>
+    );
+  }
 
   if (!report) {
     return (
