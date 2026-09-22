@@ -569,9 +569,9 @@
       "architectureSummary": "using google ecosystems, gemini, hosting etc.",
       "codeSnippetOrManifest": "",
       "grade": "AA",
-      "valuationLow": 75586,
-      "valuationFairMarket": 89983,
-      "valuationHigh": 107980,
+      "valuationLow": 88000,
+      "valuationFairMarket": 104800,
+      "valuationHigh": 125800,
       "currency": "USD",
       "codeHealth": {
         "modularityScore": 88,
@@ -653,7 +653,7 @@
         "defensibilityMoatScore": 80,
         "riskDiscountFactor": 16
       },
-      "executiveSummary": "atlastravelclub.com holds an appraised fair market valuation of $89 983 (AA Grade), substantiated by $98 560 in software engineering replacement cost, $5 000 in marketing/distribution asset equity, and a strong 88/100 code modularity rating.",
+      "executiveSummary": "atlastravelclub.com holds an appraised fair market valuation of $104,800 (AA Grade), supported by a $98,560 software engineering rebuild floor, $5,000 in marketing and domain equity, and a strong 88/100 code modularity rating.",
       "strengths": [
         "Solid Codebase Replacement Floor: $98 560 across 4 documented architectural layers",
         "Marketing & GTM Asset Value: $5 000 in verified user acquisition and domain equity",

@@ -143,20 +143,29 @@ export function computeDeterministicAppraisal(input: AppraisalInputData, userId:
 
   // 7. Blended Triangulated Valuation
   let valuationFairMarket = 0;
-  const netRebuildCost = totalRebuildCost * (1 - (technicalDebtDiscountPercent / 100));
+  const netRebuildCost = Math.round(totalRebuildCost * (1 - (technicalDebtDiscountPercent / 100)));
+  
+  // Turnkey Time-to-Market (TTM) advantage premium: Acquiring a deployed, functional codebase saves 4-8 months of development delay & hiring overhead
+  const turnkeyRate = input.stage === 'cash-flow' ? 0.25 : input.stage === 'early-traction' ? 0.20 : 0.15;
+  const timeToMarketPremium = Math.round(totalRebuildCost * turnkeyRate);
 
   if (input.monthlyRecurringRevenue > 0) {
     valuationFairMarket = Math.round(
-      (revenueMultipleValuation * 0.55) + 
-      (netRebuildCost * 0.30) + 
+      (revenueMultipleValuation * 0.50) + 
+      ((netRebuildCost + timeToMarketPremium) * 0.35) + 
       (totalMarketingReplacement * 0.15)
     );
   } else {
+    // Pre-revenue / MVP: Net Rebuild Floor + Marketing/Domain Assets + Turnkey Readiness Premium
     valuationFairMarket = Math.round(
       netRebuildCost + 
-      (totalMarketingReplacement * 0.65)
+      totalMarketingReplacement + 
+      timeToMarketPremium
     );
   }
+
+  // Consistent Valuation Principle: Fair Market Value of an active, functional software asset must never be below its replacement cost
+  valuationFairMarket = Math.max(valuationFairMarket, Math.round(totalRebuildCost + (totalMarketingReplacement * 0.75)));
 
   const valuationLow = Math.round(valuationFairMarket * 0.84);
   const valuationHigh = Math.round(valuationFairMarket * 1.20);

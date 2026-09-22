@@ -119,14 +119,20 @@ export function InstitutionalCertificate({ report, showActions = true }: Props) 
               <span className="text-xl font-black text-emerald-700 font-serif block mt-1">
                 {formatCurrency(report.valuationFairMarket, report.currency)}
               </span>
+              <span className="text-[9px] text-emerald-700/80 block font-medium mt-0.5">
+                Appraised Asset Value
+              </span>
             </div>
 
             <div className="text-center p-2">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">
-                Rebuild Baseline
+                Rebuild Baseline Floor
               </span>
               <span className="text-xl font-bold text-slate-800 font-serif block mt-1">
                 {formatCurrency(report.valuationBreakdown.costToRebuild.totalRebuildCost, report.currency)}
+              </span>
+              <span className="text-[9px] text-slate-500 block font-medium mt-0.5">
+                {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior mos @ $110/hr
               </span>
             </div>
           </div>
