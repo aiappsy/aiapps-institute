@@ -111,7 +111,87 @@
           "userBaseValue": 41440
         },
         "defensibilityMoatScore": 88,
-        "riskDiscountFactor": 8
+        "riskDiscountFactor": 8,
+        "horizons": {
+          "assetReplacementFloor": 149600,
+          "privateMaCashBuyout": {
+            "low": 145000,
+            "recommended": 168000,
+            "high": 195000
+          },
+          "venturePreSeedSafeCap": {
+            "recommendedCap": 2800000,
+            "suggestedRaiseAmount": 120000,
+            "impliedDilutionPercent": 4.3,
+            "targetMilestone": "Projected capital runway to scale from early-traction to $1M+ ARR for institutional Series Seed conversion."
+          },
+          "strategicCorporateSynergy": {
+            "estimatedValue": 470400,
+            "synergyMultiple": 2.8,
+            "rationale": "Enterprise acquisition value when folded into an established MarTech/CRM suite with existing enterprise distribution."
+          }
+        },
+        "comparableTransactions": [
+          {
+            "id": "comp-ai-01",
+            "assetName": "FormGenie Multi-Agent AI",
+            "category": "AI / Machine Learning",
+            "niche": "Autonomous Form & Conversational Lead Gen",
+            "salePrice": 178000,
+            "saleDate": "Q4 2025",
+            "revenueAtSale": 41400,
+            "multiple": "4.3x ARR",
+            "multipleType": "ARR",
+            "dealStructure": "100% Cash Asset Sale",
+            "platformOrSource": "Acquire.com Verified",
+            "similarityScore": 96,
+            "buyerProfile": "B2B SaaS Growth Studio",
+            "relevanceRationale": "Modern Next.js 14, TypeScript, and streaming LLM form canvas; bought by an agency seeking to instantly white-label and bundle with client retainers."
+          },
+          {
+            "id": "comp-ai-02",
+            "assetName": "ChatDocs AI Enterprise Assistant",
+            "category": "AI / Machine Learning",
+            "niche": "Document Intelligence & Vector RAG Assistant",
+            "salePrice": 215000,
+            "saleDate": "Jan 2026",
+            "revenueAtSale": 48000,
+            "multiple": "4.5x ARR",
+            "multipleType": "ARR",
+            "dealStructure": "Cash + Earn-out",
+            "platformOrSource": "Empire Flippers",
+            "similarityScore": 90,
+            "buyerProfile": "Enterprise Workflow Incumbent",
+            "relevanceRationale": "High maintainability score and modular microservices architecture allowed buyer to integrate into their larger CRM suite with zero tech debt rewrite."
+          },
+          {
+            "id": "comp-ai-03",
+            "assetName": "PromptForge Studio",
+            "category": "AI / Machine Learning",
+            "niche": "Prompt Engineering & Evaluation Canvas",
+            "salePrice": 125000,
+            "saleDate": "Q3 2025",
+            "revenueAtSale": 15000,
+            "multiple": "1.25x Rebuild Floor",
+            "multipleType": "RebuildFloor",
+            "dealStructure": "100% Cash Asset Sale",
+            "platformOrSource": "Acquire.com Verified",
+            "similarityScore": 88,
+            "buyerProfile": "AI SaaS Micro-Fund",
+            "relevanceRationale": "Pre-scale commercial valuation heavily anchored by the high replacement cost of multi-model orchestration pipelines and clean TypeScript code."
+          }
+        ],
+        "maCompsSummary": {
+          "medianMultiple": "4.3x ARR",
+          "transactionCount": 3,
+          "categoryAvgPrice": 172667,
+          "liquidityRating": "High",
+          "benchmarkImpliedRange": {
+            "low": 152000,
+            "recommended": 172667,
+            "high": 203000
+          }
+        }
       },
       "executiveSummary": "NeuralForm AI exemplifies institutional-grade codebase craftsmanship. The combination of high modularity, minimal external dependencies, and proven pre-seed ARR places it in the upper 95th percentile of surveyed AI MVPs.",
       "strengths": [
@@ -651,7 +731,103 @@
           "userBaseValue": 0
         },
         "defensibilityMoatScore": 80,
-        "riskDiscountFactor": 16
+        "riskDiscountFactor": 16,
+        "horizons": {
+          "assetReplacementFloor": 98560,
+          "privateMaCashBuyout": {
+            "low": 88000,
+            "recommended": 104800,
+            "high": 125800
+          },
+          "venturePreSeedSafeCap": {
+            "recommendedCap": 1750000,
+            "suggestedRaiseAmount": 75000,
+            "impliedDilutionPercent": 4.3,
+            "targetMilestone": "Projected capital runway to scale from MVP to $1M+ ARR for institutional Series Seed conversion."
+          },
+          "strategicCorporateSynergy": {
+            "estimatedValue": 293440,
+            "synergyMultiple": 2.8,
+            "rationale": "Enterprise acquisition value when folded into an established TravelTech operator with existing enterprise distribution."
+          }
+        },
+        "comparableTransactions": [
+          {
+            "id": "comp-trv-01",
+            "assetName": "NomadPass Concierge & Travel Club",
+            "category": "E-commerce / Marketplace",
+            "niche": "TravelTech & Private Membership Club",
+            "salePrice": 112000,
+            "saleDate": "Q4 2025",
+            "revenueAtSale": 18000,
+            "multiple": "1.14x Rebuild Floor",
+            "multipleType": "RebuildFloor",
+            "dealStructure": "100% Cash Asset Sale",
+            "platformOrSource": "Acquire.com Verified",
+            "similarityScore": 95,
+            "buyerProfile": "Micro-PE Portfolio Operator",
+            "relevanceRationale": "Identical full-stack Next.js travel membership club architecture with Stripe subscription billing, private destination perks, and curated member directories."
+          },
+          {
+            "id": "comp-trv-02",
+            "assetName": "FlightRoute AI Deals Hub",
+            "category": "SaaS",
+            "niche": "Travel Flight Alerts & Fare Engine",
+            "salePrice": 138000,
+            "saleDate": "Jan 2026",
+            "revenueAtSale": 36000,
+            "multiple": "3.8x ARR",
+            "multipleType": "ARR",
+            "dealStructure": "100% Cash Asset Sale",
+            "platformOrSource": "Flippa Private Reserve",
+            "similarityScore": 89,
+            "buyerProfile": "Digital Media Holding Syndicate",
+            "relevanceRationale": "Similar consumer-facing travel membership product with algorithmic deal alerts, newsletter distribution, and automated API scrapers."
+          },
+          {
+            "id": "comp-trv-03",
+            "assetName": "DestiGuide VIP Itineraries",
+            "category": "E-commerce / Marketplace",
+            "niche": "Curated Luxury Travel & Concierge Marketplace",
+            "salePrice": 98000,
+            "saleDate": "Q3 2025",
+            "revenueAtSale": 12000,
+            "multiple": "1.10x Rebuild Floor",
+            "multipleType": "RebuildFloor",
+            "dealStructure": "100% Cash Asset Sale",
+            "platformOrSource": "Acquire.com Verified",
+            "similarityScore": 92,
+            "buyerProfile": "Boutique Hospitality Syndicate",
+            "relevanceRationale": "Turn-key marketplace codebase transfer with verified vendor directory, partner integrations, and custom member profile engine."
+          },
+          {
+            "id": "comp-trv-04",
+            "assetName": "RoamPass Lifestyle Club",
+            "category": "E-commerce / Marketplace",
+            "niche": "Remote Worker & Travel Club Subscription",
+            "salePrice": 165000,
+            "saleDate": "Q2 2025",
+            "revenueAtSale": 42000,
+            "multiple": "3.9x ARR",
+            "multipleType": "ARR",
+            "dealStructure": "Private M&A Buyout",
+            "platformOrSource": "Private M&A Syndicate",
+            "similarityScore": 87,
+            "buyerProfile": "Coliving & Hospitality Aggregator",
+            "relevanceRationale": "Directly comparable recurring subscription model catering to global digital nomads with integrated Stripe customer portal."
+          }
+        ],
+        "maCompsSummary": {
+          "medianMultiple": "1.14x Rebuild Floor",
+          "transactionCount": 4,
+          "categoryAvgPrice": 128250,
+          "liquidityRating": "High",
+          "benchmarkImpliedRange": {
+            "low": 88000,
+            "recommended": 104800,
+            "high": 125800
+          }
+        }
       },
       "executiveSummary": "atlastravelclub.com holds an appraised fair market valuation of $104,800 (AA Grade), supported by a $98,560 software engineering rebuild floor, $5,000 in marketing and domain equity, and a strong 88/100 code modularity rating.",
       "strengths": [

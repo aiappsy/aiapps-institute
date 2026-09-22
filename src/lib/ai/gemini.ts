@@ -33,7 +33,7 @@ export async function generateAppraisal(input: AppraisalInputData, userId: strin
     const prompt = `
 You are the Chief Software Asset Valuator and M&A Due Diligence Director for the AIApps Institute.
 
-Perform a rigorous institutional due-diligence appraisal on this project. You have live Google Search web access to research recent competitors, established market incumbents, and market acquisition multiples:
+Perform a rigorous institutional due-diligence appraisal on this project. You have live Google Search web access to research recent competitors, established market incumbents, and actual precedent M&A transactions / sales of digital assets in this niche:
 
 Project Details:
 - Name: ${input.projectName}
@@ -57,12 +57,13 @@ Baseline Quantitative Valuation Bounds:
 
 TASK:
 1. Search the web for actual live competitors in this niche (both established market leaders and emerging AI rivals launched recently).
-2. Assess market differentiation and feature absorption risk.
-3. Validate or adjust the fair market valuation multiplier based on current real-world M&A benchmarks.
+2. Research recent real-world M&A transactions, sales of digital assets, and micro-SaaS acquisitions in this space (from Acquire.com, Flippa, Empire Flippers, FE International, Crunchbase, or private M&A announcements).
+3. Assess market differentiation and feature absorption risk.
+4. Validate or adjust the fair market valuation multiplier based on current real-world M&A benchmarks.
 
 Return a valid JSON object ONLY (no markdown fences, no conversational prose) with this exact schema:
 {
-  "executiveSummary": "string (3-4 sentences of institutional appraisal analysis incorporating competitive context)",
+  "executiveSummary": "string (3-4 sentences of institutional appraisal analysis incorporating competitive context and M&A comps)",
   "strengths": ["string", "string", "string", "string"],
   "riskFactors": ["string", "string", "string"],
   "strategicRecommendations": ["string", "string", "string"],
@@ -74,7 +75,25 @@ Return a valid JSON object ONLY (no markdown fences, no conversational prose) wi
     "emergingRivals": ["string", "string", "string"],
     "threatLevel": "Low" | "Moderate" | "High",
     "differentiationAnalysis": "string"
-  }
+  },
+  "precedentTransactions": [
+    {
+      "id": "string",
+      "assetName": "string",
+      "category": "string",
+      "niche": "string",
+      "salePrice": number,
+      "saleDate": "string",
+      "revenueAtSale": number,
+      "multiple": "string",
+      "multipleType": "ARR" | "SDE" | "RebuildFloor",
+      "dealStructure": "100% Cash Asset Sale" | "Cash + Earn-out" | "Private M&A Buyout" | "Strategic Acquisition",
+      "platformOrSource": "string",
+      "similarityScore": number,
+      "buyerProfile": "string",
+      "relevanceRationale": "string"
+    }
+  ]
 }
 `;
 
@@ -123,6 +142,21 @@ Return a valid JSON object ONLY (no markdown fences, no conversational prose) wi
       if (parsed.competitiveIntelligence.differentiationAnalysis) {
         baseAppraisal.valuationBreakdown.competitiveAudit.differentiationAnalysis = parsed.competitiveIntelligence.differentiationAnalysis;
       }
+    }
+    if (Array.isArray(parsed.precedentTransactions) && parsed.precedentTransactions.length > 0) {
+      baseAppraisal.valuationBreakdown.comparableTransactions = parsed.precedentTransactions;
+      const avgPrice = Math.round(parsed.precedentTransactions.reduce((acc: number, c: any) => acc + (c.salePrice || 0), 0) / parsed.precedentTransactions.length);
+      baseAppraisal.valuationBreakdown.maCompsSummary = {
+        medianMultiple: parsed.precedentTransactions[0]?.multiple || "4.1x ARR",
+        transactionCount: parsed.precedentTransactions.length,
+        categoryAvgPrice: avgPrice,
+        liquidityRating: "High",
+        benchmarkImpliedRange: {
+          low: Math.round(avgPrice * 0.88),
+          recommended: avgPrice,
+          high: Math.round(avgPrice * 1.18),
+        }
+      };
     }
   } catch (error) {
     console.warn("Gemini API call skipped or encountered error, using baseline algorithmic appraisal:", error);

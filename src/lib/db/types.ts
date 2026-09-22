@@ -61,6 +61,37 @@ export interface ValuationBreakdown {
   defensibilityMoatScore: number; // 0 - 100
   riskDiscountFactor: number; // %
   horizons?: ValuationHorizons;
+  comparableTransactions?: ComparableTransaction[];
+  maCompsSummary?: MaCompsSummary;
+}
+
+export interface ComparableTransaction {
+  id: string;
+  assetName: string;
+  category: string;
+  niche: string;
+  salePrice: number;
+  saleDate: string; // e.g., "Q4 2025" or "Jan 2026"
+  revenueAtSale?: number; // TTM revenue or MRR * 12
+  multiple: string; // e.g. "4.2x ARR", "34x Monthly Net", "1.18x Rebuild Floor"
+  multipleType: 'ARR' | 'SDE' | 'RebuildFloor' | 'UserAcquisition';
+  dealStructure: '100% Cash Asset Sale' | 'Cash + Earn-out' | 'Private M&A Buyout' | 'Strategic Acquisition';
+  platformOrSource: string; // e.g. "Acquire.com Verified", "Flippa Private Syndicate", "Empire Flippers", "FE International", "Crunchbase M&A"
+  similarityScore: number; // 0 - 100%
+  buyerProfile: string; // e.g. "Micro-PE Portfolio", "Strategic Competitor", "Solo Operator"
+  relevanceRationale: string; // Detailed breakdown of why this comp benchmarks the asset
+}
+
+export interface MaCompsSummary {
+  medianMultiple: string; // e.g. "4.1x ARR" or "1.18x Asset Replacement"
+  transactionCount: number;
+  categoryAvgPrice: number;
+  liquidityRating: 'High' | 'Moderate' | 'Selective';
+  benchmarkImpliedRange: {
+    low: number;
+    recommended: number;
+    high: number;
+  };
 }
 
 export interface ValuationHorizons {
