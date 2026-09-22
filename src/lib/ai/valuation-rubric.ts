@@ -1,4 +1,4 @@
-import { AppraisalGrade, AppraisalReport, AppraisalStage, CodeHealthMetrics, CompetitiveAudit, MarketingReplacementCost, RebuildLayer, ValuationBreakdown } from "../db/types";
+import { AppraisalGrade, AppraisalReport, AppraisalStage, CodeHealthMetrics, CompetitiveAudit, MarketingReplacementCost, RebuildLayer, ValuationBreakdown, ValuationHorizons } from "../db/types";
 import { generateSha256Checksum } from "../utils";
 
 export interface AppraisalInputData {
@@ -178,6 +178,32 @@ export function computeDeterministicAppraisal(input: AppraisalInputData, userId:
   else if (valuationFairMarket >= 25000 && maintainabilityIndex >= 75) grade = 'A+';
   else if (valuationFairMarket >= 15000) grade = 'A';
 
+  // 8. Valuation Horizons Spectrum (Bridging Asset Buyout to Venture SAFE Cap)
+  const safeCapBaseline = Math.max(1500000, Math.round((valuationFairMarket * 16.7) / 50000) * 50000);
+  const targetRaise = 75000;
+  const impliedDilution = parseFloat(((targetRaise / safeCapBaseline) * 100).toFixed(1));
+  const synergyMultiple = 2.8;
+
+  const horizons: ValuationHorizons = {
+    assetReplacementFloor: totalRebuildCost,
+    privateMaCashBuyout: {
+      low: valuationLow,
+      recommended: valuationFairMarket,
+      high: valuationHigh,
+    },
+    venturePreSeedSafeCap: {
+      recommendedCap: safeCapBaseline,
+      suggestedRaiseAmount: targetRaise,
+      impliedDilutionPercent: impliedDilution,
+      targetMilestone: `Projected capital runway to scale from ${input.stage.toUpperCase()} to $1M+ ARR for institutional Series Seed conversion.`,
+    },
+    strategicCorporateSynergy: {
+      estimatedValue: Math.round(valuationFairMarket * synergyMultiple),
+      synergyMultiple,
+      rationale: `Enterprise acquisition value when folded into an established ${input.category} operator with existing enterprise distribution.`,
+    },
+  };
+
   const valuationBreakdown: ValuationBreakdown = {
     costToRebuild: {
       estimatedPersonMonths: totalPersonMonths,
@@ -201,7 +227,8 @@ export function computeDeterministicAppraisal(input: AppraisalInputData, userId:
       userBaseValue
     },
     defensibilityMoatScore: competitiveAudit.moatDefensibilityScore,
-    riskDiscountFactor: technicalDebtDiscountPercent + 4
+    riskDiscountFactor: technicalDebtDiscountPercent + 4,
+    horizons,
   };
 
   const id = `appr-${Date.now().toString().slice(-6)}`;

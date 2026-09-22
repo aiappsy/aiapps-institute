@@ -162,6 +162,27 @@ export default function ReportDetailPage() {
 
   const gradeColors = getGradeBadgeColor(report.grade);
 
+  // Compute 4-Perspective Valuation Horizons Spectrum
+  const horizons = report.valuationBreakdown.horizons || {
+    assetReplacementFloor: report.valuationBreakdown.costToRebuild.totalRebuildCost,
+    privateMaCashBuyout: {
+      low: report.valuationLow,
+      recommended: report.valuationFairMarket,
+      high: report.valuationHigh,
+    },
+    venturePreSeedSafeCap: {
+      recommendedCap: Math.max(1500000, Math.round((report.valuationFairMarket * 16.7) / 50000) * 50000),
+      suggestedRaiseAmount: 75000,
+      impliedDilutionPercent: parseFloat(((75000 / Math.max(1500000, Math.round((report.valuationFairMarket * 16.7) / 50000) * 50000)) * 100).toFixed(1)),
+      targetMilestone: `Projected capital runway to scale from ${report.stage.toUpperCase()} to $1M+ ARR for institutional Series Seed conversion.`,
+    },
+    strategicCorporateSynergy: {
+      estimatedValue: Math.round(report.valuationFairMarket * 2.8),
+      synergyMultiple: 2.8,
+      rationale: `Enterprise acquisition value when folded into an established ${report.category} operator with existing enterprise distribution.`,
+    },
+  };
+
   // Calculate dynamic simulated valuation
   const simMonths = report.valuationBreakdown.costToRebuild.estimatedPersonMonths;
   const simRebuildFloor = Math.round(simMonths * 160 * simHourlyRate * (1 - (report.codeHealth.technicalDebtDiscountPercent / 100)));
@@ -184,14 +205,12 @@ export default function ReportDetailPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           appraisalId: report.id,
-          askingPrice: Number(askingPrice),
-          sellerName: "Paul Founder",
-          sellerEmail: "founder@aiappsinstitute.com",
+          askingPrice,
           boostTier: selectedBoost,
         }),
       });
       const data = await res.json();
-      if (res.ok) {
+      if (data.success) {
         setPublishSuccess(true);
         setTimeout(() => {
           setIsListingModalOpen(false);
@@ -206,7 +225,7 @@ export default function ReportDetailPage() {
   };
 
   return (
-    <div className="space-y-6 pb-20 max-w-5xl mx-auto">
+    <div className="max-w-6xl mx-auto space-y-8 pb-20">
       {/* Top Breadcrumb & Status */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
         <div className="flex items-center gap-2">
@@ -236,20 +255,19 @@ export default function ReportDetailPage() {
             <span className="text-xs text-slate-600 font-medium">{report.category}</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900 tracking-tight">
             {report.projectName}
           </h1>
-          <p className="text-sm text-slate-600 max-w-2xl">
+          <p className="text-xs sm:text-sm text-slate-600 max-w-xl">
             {report.tagline}
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500 font-mono">
-            <span>Cert ID: {report.certificate.certificateId}</span>
+          <div className="pt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+            <span className="font-mono">Cert ID: {report.certificate.certificateId}</span>
             <span>•</span>
             <Link
-              href={report.certificate.verificationUrl}
-              target="_blank"
-              className="text-blue-600 hover:underline inline-flex items-center gap-1"
+              href={`/verify/${report.certificate.certificateId}`}
+              className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium"
             >
               <span>Public Verification Ledger</span>
               <ExternalLink className="w-3 h-3" />
@@ -274,7 +292,7 @@ export default function ReportDetailPage() {
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <button
               onClick={() => setActiveTab("certificate")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs transition-colors"
             >
               <Award className="w-3.5 h-3.5 text-amber-500" />
               <span>Official Certificate</span>
@@ -282,7 +300,7 @@ export default function ReportDetailPage() {
 
             <button
               onClick={() => setIsSaveProjectModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs font-semibold shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-xs transition-colors"
             >
               <GitBranch className="w-3.5 h-3.5 text-blue-600" />
               <span>Save & Push to GitHub</span>
@@ -392,6 +410,112 @@ export default function ReportDetailPage() {
       {/* TAB 1: Executive Dossier */}
       {activeTab === "summary" && (
         <div className="space-y-6">
+          {/* Multi-Perspective Valuation Horizons Card */}
+          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-subtle space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded bg-slate-900 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider">
+                    Institutional Valuation Horizons
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">Asset vs. Equity Spectrum</span>
+                </div>
+                <h3 className="text-base font-bold text-slate-900 mt-1">
+                  Pricing Spectrum Across Transaction Horizons
+                </h3>
+              </div>
+              <p className="text-[11px] text-slate-500 max-w-sm">
+                Software valuations differ by transaction structure: asset liquidation vs. cash buyout vs. venture fundraising vs. strategic corporate synergy.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+              {/* Perspective 1: Asset Rebuild Floor */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-slate-400">1. Cost Approach</span>
+                  <span className="text-[10px] font-mono text-slate-600 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                    Rebuild Floor
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xl font-black text-slate-900 font-serif block">
+                    {formatCurrency(horizons.assetReplacementFloor)}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block">
+                    {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior mos @ ${report.valuationBreakdown.costToRebuild.hourlySeniorDevRate}/hr
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-600 leading-relaxed border-t border-slate-200/60 pt-2">
+                  Hard replacement floor: what it costs an engineering team to rewrite this codebase from scratch.
+                </p>
+              </div>
+
+              {/* Perspective 2: Private M&A Cash Buyout */}
+              <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-emerald-800">2. Asset Sale</span>
+                  <span className="text-[10px] font-mono text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200">
+                    Acquire / Flippa
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xl font-black text-emerald-800 font-serif block">
+                    {formatCurrency(horizons.privateMaCashBuyout.recommended)}
+                  </span>
+                  <span className="text-[11px] text-emerald-700 block">
+                    Bounds: {formatCurrency(horizons.privateMaCashBuyout.low)} – {formatCurrency(horizons.privateMaCashBuyout.high)}
+                  </span>
+                </div>
+                <p className="text-[10px] text-emerald-900 leading-relaxed border-t border-emerald-200/60 pt-2">
+                  Immediate 100% cash acquisition price for Git source, domain, database, and turnkey IP today.
+                </p>
+              </div>
+
+              {/* Perspective 3: Venture / Angel SAFE Cap */}
+              <div className="p-4 rounded-xl bg-amber-50/50 border border-amber-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-amber-800">3. Venture Capital</span>
+                  <span className="text-[10px] font-mono text-amber-800 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                    YC SAFE Cap
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xl font-black text-amber-900 font-serif block">
+                    {formatCurrency(horizons.venturePreSeedSafeCap.recommendedCap)}
+                  </span>
+                  <span className="text-[11px] text-amber-800 block">
+                    ${formatCurrency(horizons.venturePreSeedSafeCap.suggestedRaiseAmount)} check (~{horizons.venturePreSeedSafeCap.impliedDilutionPercent}% equity)
+                  </span>
+                </div>
+                <p className="text-[10px] text-amber-900 leading-relaxed border-t border-amber-200/60 pt-2">
+                  Post-Money SAFE Cap for pre-seed angel rounds pricing forward-looking equity upside toward Series Seed.
+                </p>
+              </div>
+
+              {/* Perspective 4: Strategic Corporate Synergy */}
+              <div className="p-4 rounded-xl bg-purple-50/50 border border-purple-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase font-bold text-purple-800">4. Strategic Buyer</span>
+                  <span className="text-[10px] font-mono text-purple-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                    {horizons.strategicCorporateSynergy.synergyMultiple}x Multiple
+                  </span>
+                </div>
+                <div>
+                  <span className="text-xl font-black text-purple-900 font-serif block">
+                    {formatCurrency(horizons.strategicCorporateSynergy.estimatedValue)}
+                  </span>
+                  <span className="text-[11px] text-purple-700 block">
+                    Strategic Enterprise Premium
+                  </span>
+                </div>
+                <p className="text-[10px] text-purple-900 leading-relaxed border-t border-purple-200/60 pt-2">
+                  Acquisition value to an incumbent with pre-existing distribution who can instantly cross-sell the product.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Institutional Assessor Executive Summary
@@ -519,6 +643,78 @@ export default function ReportDetailPage() {
             <p className="text-xs text-slate-700 leading-relaxed font-sans">
               {report.executiveSummary}
             </p>
+          </div>
+
+          {/* Section 1.5: Transaction Horizons & Valuation Framework */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+              1.1 Transaction Structuring & Valuation Horizons
+            </h3>
+            <p className="text-xs text-slate-600">
+              Institutional due-diligence appraisal recognizes four distinct economic perspectives depending on the buyer or investor transaction model:
+            </p>
+            <div className="overflow-x-auto border border-slate-200 rounded-xl">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 font-mono text-[10px] text-slate-500 uppercase">
+                  <tr>
+                    <th className="p-3">Transaction Horizon</th>
+                    <th className="p-3">Appraised Benchmark</th>
+                    <th className="p-3">Deal Structure</th>
+                    <th className="p-3">Target Participant</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-sans">
+                  <tr>
+                    <td className="p-3 font-bold text-slate-900">
+                      Codebase Asset Buyout (M&A)
+                      <span className="block text-[10px] font-normal text-slate-500">100% IP, domain, and Git source transfer</span>
+                    </td>
+                    <td className="p-3 font-bold text-emerald-800 font-serif">
+                      {formatCurrency(horizons.privateMaCashBuyout.recommended)}
+                      <span className="block text-[10px] font-normal text-slate-500">Fair Market Asset Price</span>
+                    </td>
+                    <td className="p-3 text-slate-700">100% Cash / Stripe Escrow</td>
+                    <td className="p-3 text-slate-600">Micro-PE, Syndicates, Indie Acquirers</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-slate-900">
+                      Venture Angel SAFE Round
+                      <span className="block text-[10px] font-normal text-slate-500">Forward-looking pre-seed equity round</span>
+                    </td>
+                    <td className="p-3 font-bold text-amber-900 font-serif">
+                      {formatCurrency(horizons.venturePreSeedSafeCap.recommendedCap)} Cap
+                      <span className="block text-[10px] font-normal text-slate-500">${formatCurrency(horizons.venturePreSeedSafeCap.suggestedRaiseAmount)} check (~{horizons.venturePreSeedSafeCap.impliedDilutionPercent}%)</span>
+                    </td>
+                    <td className="p-3 text-slate-700">YC Post-Money SAFE (20% Disc.)</td>
+                    <td className="p-3 text-slate-600">Angel Investors & Pre-Seed Accelerators</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-slate-900">
+                      Engineering Replacement Floor
+                      <span className="block text-[10px] font-normal text-slate-500">Cost to recreate codebase from scratch</span>
+                    </td>
+                    <td className="p-3 font-bold text-slate-800 font-serif">
+                      {formatCurrency(horizons.assetReplacementFloor)}
+                      <span className="block text-[10px] font-normal text-slate-500">{report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior dev-months</span>
+                    </td>
+                    <td className="p-3 text-slate-700">Labor Cost Benchmark</td>
+                    <td className="p-3 text-slate-600">Chief Technology Officers & Technical Buyers</td>
+                  </tr>
+                  <tr>
+                    <td className="p-3 font-bold text-slate-900">
+                      Strategic Corporate Synergy
+                      <span className="block text-[10px] font-normal text-slate-500">Value to incumbent with pre-built distribution</span>
+                    </td>
+                    <td className="p-3 font-bold text-purple-900 font-serif">
+                      {formatCurrency(horizons.strategicCorporateSynergy.estimatedValue)}
+                      <span className="block text-[10px] font-normal text-slate-500">{horizons.strategicCorporateSynergy.synergyMultiple}x Synergy Multiple</span>
+                    </td>
+                    <td className="p-3 text-slate-700">Corporate Stock / Cash Merger</td>
+                    <td className="p-3 text-slate-600">Enterprise Operators & Strategic Competitors</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Section 2: Codebase Replacement Cost & Architecture */}

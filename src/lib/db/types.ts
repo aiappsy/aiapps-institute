@@ -60,6 +60,27 @@ export interface ValuationBreakdown {
   };
   defensibilityMoatScore: number; // 0 - 100
   riskDiscountFactor: number; // %
+  horizons?: ValuationHorizons;
+}
+
+export interface ValuationHorizons {
+  assetReplacementFloor: number; // Cost Approach (Engineering rebuild floor)
+  privateMaCashBuyout: {
+    low: number;
+    recommended: number;
+    high: number;
+  }; // Immediate cash asset sale on Acquire.com / Flippa / private transaction
+  venturePreSeedSafeCap: {
+    recommendedCap: number; // Forward-looking YC SAFE Cap (e.g. $1.5M - $2.5M)
+    suggestedRaiseAmount: number; // e.g. $75,000
+    impliedDilutionPercent: number; // e.g. 4.3%
+    targetMilestone: string;
+  };
+  strategicCorporateSynergy: {
+    estimatedValue: number; // e.g. $280k - $450k
+    synergyMultiple: number; // e.g. 2.5x - 3.5x
+    rationale: string;
+  };
 }
 
 export interface AppraisalReport {
