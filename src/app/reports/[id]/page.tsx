@@ -40,6 +40,7 @@ export default function ReportDetailPage() {
   const [report, setReport] = useState<AppraisalReport | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"summary" | "certificate" | "cim" | "rebuildLayers" | "marketing" | "competition" | "simulator">("summary");
+  const [selectedHorizon, setSelectedHorizon] = useState<"floor" | "asset" | "venture" | "synergy">("asset");
   const [isListingModalOpen, setIsListingModalOpen] = useState(false);
   const [askingPrice, setAskingPrice] = useState(0);
   const [selectedBoost, setSelectedBoost] = useState<"standard" | "featured" | "vip">("standard");
@@ -278,13 +279,13 @@ export default function ReportDetailPage() {
         {/* Valuation Callout & Actions */}
         <div className="flex flex-col sm:items-end gap-3 bg-slate-50 p-5 rounded-xl border border-slate-100 shrink-0">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block sm:text-right">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block sm:text-right">
               Fair Market Valuation
             </span>
             <span className="text-3xl font-black text-slate-900 font-serif block sm:text-right">
               {formatCurrency(report.valuationFairMarket, report.currency)}
             </span>
-            <span className="text-xs text-slate-500 block sm:text-right">
+            <span className="text-xs font-medium text-slate-600 block sm:text-right">
               Bounds: {formatCurrency(report.valuationLow)} – {formatCurrency(report.valuationHigh)}
             </span>
           </div>
@@ -411,145 +412,341 @@ export default function ReportDetailPage() {
       {activeTab === "summary" && (
         <div className="space-y-6">
           {/* Multi-Perspective Valuation Horizons Card */}
-          <div className="bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-subtle space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-subtle space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-slate-900 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full bg-slate-900 text-amber-400 text-xs font-mono font-bold uppercase tracking-wider">
                     Institutional Valuation Horizons
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">Asset vs. Equity Spectrum</span>
+                  <span className="text-xs sm:text-sm text-slate-500 font-medium">Asset vs. Equity Spectrum</span>
                 </div>
-                <h3 className="text-base font-bold text-slate-900 mt-1">
+                <h3 className="text-xl sm:text-2xl font-serif font-bold text-slate-900 tracking-tight mt-1.5">
                   Pricing Spectrum Across Transaction Horizons
                 </h3>
               </div>
-              <p className="text-[11px] text-slate-500 max-w-sm">
-                Software valuations differ by transaction structure: asset liquidation vs. cash buyout vs. venture fundraising vs. strategic corporate synergy.
+              <p className="text-xs sm:text-sm text-slate-600 max-w-md leading-relaxed">
+                Software assets carry different valuations depending on transaction structure: raw code rebuild cost, private M&A cash sale, angel fundraising, or strategic corporate synergy.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+            {/* 4 Interactive Valuation Horizon Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Perspective 1: Asset Rebuild Floor */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+              <div
+                onClick={() => setSelectedHorizon("floor")}
+                className={`p-5 rounded-xl border transition-all cursor-pointer space-y-3 ${
+                  selectedHorizon === "floor"
+                    ? "bg-white border-slate-900 ring-2 ring-slate-900 shadow-md"
+                    : "bg-slate-50 hover:bg-white border-slate-200 hover:border-slate-300"
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold text-slate-400">1. Cost Approach</span>
-                  <span className="text-[10px] font-mono text-slate-600 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">1. Cost Approach</span>
+                  <span className="text-xs font-mono font-semibold text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                     Rebuild Floor
                   </span>
                 </div>
                 <div>
-                  <span className="text-xl font-black text-slate-900 font-serif block">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 font-serif block">
                     {formatCurrency(horizons.assetReplacementFloor)}
                   </span>
-                  <span className="text-[11px] text-slate-500 block">
-                    {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior mos @ ${report.valuationBreakdown.costToRebuild.hourlySeniorDevRate}/hr
+                  <span className="text-xs text-slate-600 font-medium block mt-1">
+                    {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior dev-months @ ${report.valuationBreakdown.costToRebuild.hourlySeniorDevRate}/hr
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-600 leading-relaxed border-t border-slate-200/60 pt-2">
-                  Hard replacement floor: what it costs an engineering team to rewrite this codebase from scratch.
+                <p className="text-xs text-slate-700 leading-relaxed border-t border-slate-200 pt-2.5">
+                  Labor replacement floor: what it costs an engineering team to recreate this codebase from scratch.
                 </p>
+                <div className="text-xs font-bold text-blue-600 flex items-center gap-1 pt-1">
+                  <span>{selectedHorizon === "floor" ? "✓ Viewing Full Methodology" : "Click for deep dive →"}</span>
+                </div>
               </div>
 
               {/* Perspective 2: Private M&A Cash Buyout */}
-              <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200 space-y-2">
+              <div
+                onClick={() => setSelectedHorizon("asset")}
+                className={`p-5 rounded-xl border transition-all cursor-pointer space-y-3 ${
+                  selectedHorizon === "asset"
+                    ? "bg-white border-emerald-600 ring-2 ring-emerald-600 shadow-md"
+                    : "bg-emerald-50/40 hover:bg-white border-emerald-200 hover:border-emerald-300"
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold text-emerald-800">2. Asset Sale</span>
-                  <span className="text-[10px] font-mono text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200">
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">2. Asset Sale</span>
+                  <span className="text-xs font-mono font-semibold text-emerald-800 bg-white px-2 py-0.5 rounded border border-emerald-200">
                     Acquire / Flippa
                   </span>
                 </div>
                 <div>
-                  <span className="text-xl font-black text-emerald-800 font-serif block">
+                  <span className="text-2xl sm:text-3xl font-black text-emerald-800 font-serif block">
                     {formatCurrency(horizons.privateMaCashBuyout.recommended)}
                   </span>
-                  <span className="text-[11px] text-emerald-700 block">
+                  <span className="text-xs text-emerald-700 font-medium block mt-1">
                     Bounds: {formatCurrency(horizons.privateMaCashBuyout.low)} – {formatCurrency(horizons.privateMaCashBuyout.high)}
                   </span>
                 </div>
-                <p className="text-[10px] text-emerald-900 leading-relaxed border-t border-emerald-200/60 pt-2">
-                  Immediate 100% cash acquisition price for Git source, domain, database, and turnkey IP today.
+                <p className="text-xs text-slate-700 leading-relaxed border-t border-emerald-200 pt-2.5">
+                  Day-1 cash acquisition price for 100% of Git source code, domain, database, and turnkey software IP.
                 </p>
+                <div className="text-xs font-bold text-emerald-700 flex items-center gap-1 pt-1">
+                  <span>{selectedHorizon === "asset" ? "✓ Viewing Full Methodology" : "Click for deep dive →"}</span>
+                </div>
               </div>
 
               {/* Perspective 3: Venture / Angel SAFE Cap */}
-              <div className="p-4 rounded-xl bg-amber-50/50 border border-amber-200 space-y-2">
+              <div
+                onClick={() => setSelectedHorizon("venture")}
+                className={`p-5 rounded-xl border transition-all cursor-pointer space-y-3 ${
+                  selectedHorizon === "venture"
+                    ? "bg-white border-amber-600 ring-2 ring-amber-600 shadow-md"
+                    : "bg-amber-50/40 hover:bg-white border-amber-200 hover:border-amber-300"
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold text-amber-800">3. Venture Capital</span>
-                  <span className="text-[10px] font-mono text-amber-800 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-800">3. Venture Capital</span>
+                  <span className="text-xs font-mono font-semibold text-amber-800 bg-white px-2 py-0.5 rounded border border-amber-200">
                     YC SAFE Cap
                   </span>
                 </div>
                 <div>
-                  <span className="text-xl font-black text-amber-900 font-serif block">
+                  <span className="text-2xl sm:text-3xl font-black text-amber-900 font-serif block">
                     {formatCurrency(horizons.venturePreSeedSafeCap.recommendedCap)}
                   </span>
-                  <span className="text-[11px] text-amber-800 block">
+                  <span className="text-xs text-amber-800 font-medium block mt-1">
                     ${formatCurrency(horizons.venturePreSeedSafeCap.suggestedRaiseAmount)} check (~{horizons.venturePreSeedSafeCap.impliedDilutionPercent}% equity)
                   </span>
                 </div>
-                <p className="text-[10px] text-amber-900 leading-relaxed border-t border-amber-200/60 pt-2">
+                <p className="text-xs text-slate-700 leading-relaxed border-t border-amber-200 pt-2.5">
                   Post-Money SAFE Cap for pre-seed angel rounds pricing forward-looking equity upside toward Series Seed.
                 </p>
+                <div className="text-xs font-bold text-amber-800 flex items-center gap-1 pt-1">
+                  <span>{selectedHorizon === "venture" ? "✓ Viewing Full Methodology" : "Click for deep dive →"}</span>
+                </div>
               </div>
 
               {/* Perspective 4: Strategic Corporate Synergy */}
-              <div className="p-4 rounded-xl bg-purple-50/50 border border-purple-200 space-y-2">
+              <div
+                onClick={() => setSelectedHorizon("synergy")}
+                className={`p-5 rounded-xl border transition-all cursor-pointer space-y-3 ${
+                  selectedHorizon === "synergy"
+                    ? "bg-white border-purple-600 ring-2 ring-purple-600 shadow-md"
+                    : "bg-purple-50/40 hover:bg-white border-purple-200 hover:border-purple-300"
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase font-bold text-purple-800">4. Strategic Buyer</span>
-                  <span className="text-[10px] font-mono text-purple-700 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-800">4. Strategic Buyer</span>
+                  <span className="text-xs font-mono font-semibold text-purple-800 bg-white px-2 py-0.5 rounded border border-purple-200">
                     {horizons.strategicCorporateSynergy.synergyMultiple}x Multiple
                   </span>
                 </div>
                 <div>
-                  <span className="text-xl font-black text-purple-900 font-serif block">
+                  <span className="text-2xl sm:text-3xl font-black text-purple-900 font-serif block">
                     {formatCurrency(horizons.strategicCorporateSynergy.estimatedValue)}
                   </span>
-                  <span className="text-[11px] text-purple-700 block">
+                  <span className="text-xs text-purple-700 font-medium block mt-1">
                     Strategic Enterprise Premium
                   </span>
                 </div>
-                <p className="text-[10px] text-purple-900 leading-relaxed border-t border-purple-200/60 pt-2">
+                <p className="text-xs text-slate-700 leading-relaxed border-t border-purple-200 pt-2.5">
                   Acquisition value to an incumbent with pre-existing distribution who can instantly cross-sell the product.
                 </p>
+                <div className="text-xs font-bold text-purple-800 flex items-center gap-1 pt-1">
+                  <span>{selectedHorizon === "synergy" ? "✓ Viewing Full Methodology" : "Click for deep dive →"}</span>
+                </div>
               </div>
+            </div>
+
+            {/* IN-DEPTH METHODOLOGY & STRATEGIC BREAKDOWN PANEL */}
+            <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+                  <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wide">
+                    Detailed Valuation Methodology:{" "}
+                    {selectedHorizon === "floor" && "1. Engineering Rebuild Labor Floor"}
+                    {selectedHorizon === "asset" && "2. Private M&A Cash Buyout (Asset Sale)"}
+                    {selectedHorizon === "venture" && "3. Venture Capital Pre-Seed SAFE Cap"}
+                    {selectedHorizon === "synergy" && "4. Strategic Corporate Synergy Premium"}
+                  </h4>
+                </div>
+                <span className="text-xs font-mono text-slate-500 font-semibold">
+                  AAI Institutional Standard Guideline
+                </span>
+              </div>
+
+              {selectedHorizon === "floor" && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Economic Definition
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      Measures the raw replacement cost of engineering labor required to build this exact software system from zero. It establishes the mathematical baseline below which an asset should never be sold.
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Mathematical Formula
+                    </span>
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 font-mono text-xs space-y-1 text-slate-800">
+                      <div>Person-Months: <strong>{report.valuationBreakdown.costToRebuild.estimatedPersonMonths} mos</strong></div>
+                      <div>Engineering Hours: <strong>{Math.round(report.valuationBreakdown.costToRebuild.estimatedPersonMonths * 160)} hrs</strong></div>
+                      <div>Senior Dev Rate: <strong>${report.valuationBreakdown.costToRebuild.hourlySeniorDevRate}/hr</strong></div>
+                      <div className="text-emerald-700 font-bold border-t border-slate-100 pt-1">
+                        Gross Rebuild = {formatCurrency(horizons.assetReplacementFloor)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Who Uses This Number
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      <strong>Chief Technology Officers, Engineering Leads & Technical Auditors.</strong> Used during technical due diligence to verify whether buying the codebase is cheaper and faster than building it internally.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedHorizon === "asset" && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Economic Definition
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      The recommended 100% cash buyout price on marketplaces such as <strong>Acquire.com, Flippa, and Private M&A Syndicates</strong>. The buyer receives full Git source code, domains, DNS, database, and all IP rights.
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Mathematical Formula
+                    </span>
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 font-mono text-xs space-y-1 text-slate-800">
+                      <div>Net Rebuild Floor: <strong>{formatCurrency(Math.round(horizons.assetReplacementFloor * (1 - report.codeHealth.technicalDebtDiscountPercent / 100)))}</strong></div>
+                      <div>Marketing & SEO: <strong>+{formatCurrency(report.valuationBreakdown.marketingReplacement.totalMarketingReplacement)}</strong></div>
+                      <div>Turnkey TTM Premium: <strong>+{formatCurrency(Math.round(horizons.assetReplacementFloor * 0.15))}</strong></div>
+                      <div className="text-emerald-700 font-bold border-t border-slate-100 pt-1">
+                        Fair Market Value = {formatCurrency(horizons.privateMaCashBuyout.recommended)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Who Uses This Number
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      <strong>Micro-PE Funds, Portfolio Operators & Solo Acquirers.</strong> Perfect for buyers looking to acquire an operational, turn-key product with clean code and launch marketing immediately.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedHorizon === "venture" && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Economic Definition
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      The enterprise valuation cap on a standard <strong>Y Combinator Post-Money SAFE</strong>. Venture investors do not buy the software as an asset; they invest growth capital for future equity upside.
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Mathematical Formula
+                    </span>
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 font-mono text-xs space-y-1 text-slate-800">
+                      <div>Valuation Cap: <strong>{formatCurrency(horizons.venturePreSeedSafeCap.recommendedCap)}</strong></div>
+                      <div>Sample Check Size: <strong>${formatCurrency(horizons.venturePreSeedSafeCap.suggestedRaiseAmount)}</strong></div>
+                      <div>Implied Equity at Cap: <strong>~{horizons.venturePreSeedSafeCap.impliedDilutionPercent}%</strong></div>
+                      <div className="text-amber-800 font-bold border-t border-slate-100 pt-1">
+                        Target: Series Seed @ $15M-$20M Val
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Who Uses This Number
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      <strong>Angel Investors, Syndicates & Pre-Seed Accelerators.</strong> Used when you are raising a pre-seed round (e.g. $25k-$150k) to fund marketing and acquire your first 1,000 paying customers.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedHorizon === "synergy" && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm">
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Economic Definition
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      The acquisition value of the platform when purchased by an established corporate competitor or ecosystem operator who can cross-sell the software to an existing customer base.
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Mathematical Formula
+                    </span>
+                    <div className="bg-white p-3 rounded-lg border border-slate-200 font-mono text-xs space-y-1 text-slate-800">
+                      <div>Base Asset Valuation: <strong>{formatCurrency(horizons.privateMaCashBuyout.recommended)}</strong></div>
+                      <div>Synergy Distribution Multiplier: <strong>{horizons.strategicCorporateSynergy.synergyMultiple}x</strong></div>
+                      <div>Incremental CAC: <strong>$0 (Pre-existing distribution)</strong></div>
+                      <div className="text-purple-800 font-bold border-t border-slate-100 pt-1">
+                        Enterprise Value = {formatCurrency(horizons.strategicCorporateSynergy.estimatedValue)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="font-bold text-slate-900 uppercase text-xs tracking-wider block">
+                      Who Uses This Number
+                    </span>
+                    <p className="text-slate-700 leading-relaxed">
+                      <strong>Corporate Development VPs, Strategic Acquirers & Enterprise Partners.</strong> Used during M&A discussions with larger market incumbents seeking to absorb your technical features.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          <div className="bg-white p-6 sm:p-7 rounded-xl border border-slate-200 shadow-subtle space-y-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
               Institutional Assessor Executive Summary
             </h3>
-            <p className="text-sm text-slate-800 leading-relaxed font-sans">
+            <p className="text-sm sm:text-base text-slate-800 leading-relaxed font-sans">
               {report.executiveSummary}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
+            <div className="bg-white p-6 sm:p-7 rounded-xl border border-slate-200 shadow-subtle space-y-4">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <h3 className="text-sm font-bold text-slate-900">Institutional Strengths & Moats</h3>
+                <h3 className="text-base font-bold text-slate-900">Institutional Strengths & Moats</h3>
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-700">
+              <ul className="space-y-3 text-sm text-slate-800 leading-relaxed">
                 {report.strengths.map((str, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 mt-2 shrink-0"></span>
                     <span>{str}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-subtle space-y-4">
+            <div className="bg-white p-6 sm:p-7 rounded-xl border border-slate-200 shadow-subtle space-y-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-amber-600" />
-                <h3 className="text-sm font-bold text-slate-900">Risk Factors & Dilution Hazards</h3>
+                <h3 className="text-base font-bold text-slate-900">Risk Factors & Dilution Hazards</h3>
               </div>
-              <ul className="space-y-2.5 text-xs text-slate-700">
+              <ul className="space-y-3 text-sm text-slate-800 leading-relaxed">
                 {report.riskFactors.map((risk, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 mt-2 shrink-0"></span>
                     <span>{risk}</span>
                   </li>
                 ))}
@@ -571,15 +768,15 @@ export default function ReportDetailPage() {
           <div className="border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded bg-slate-900 text-amber-400 text-[10px] font-mono font-bold tracking-wider uppercase">
+                <span className="px-2.5 py-1 rounded bg-slate-900 text-amber-400 text-xs font-mono font-bold tracking-wider uppercase">
                   Confidential Information Memorandum (CIM)
                 </span>
-                <span className="text-xs font-mono text-slate-400">REF: #{report.id}</span>
+                <span className="text-xs font-mono text-slate-500">REF: #{report.id}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900 tracking-tight">
                 {report.projectName} — Acquisition Memo
               </h2>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-sm text-slate-600 font-medium">
                 Prepared by AIApps Institute for accredited institutional acquirers & syndicates
               </p>
             </div>
@@ -598,64 +795,64 @@ export default function ReportDetailPage() {
           {/* 4-Metric Institutional Scorecard */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Certified Valuation</span>
+              <span className="text-xs uppercase font-bold text-slate-500 block">Certified Valuation</span>
               <span className="text-2xl font-black text-slate-900 font-serif block mt-1">
                 {formatCurrency(report.valuationFairMarket)}
               </span>
-              <span className="text-[10px] text-slate-500">Fair Market Benchmark</span>
+              <span className="text-xs text-slate-600">Fair Market Benchmark</span>
             </div>
 
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Rebuild Floor</span>
+              <span className="text-xs uppercase font-bold text-slate-500 block">Rebuild Floor</span>
               <span className="text-2xl font-black text-slate-800 font-serif block mt-1">
                 {formatCurrency(report.valuationBreakdown.costToRebuild.totalRebuildCost)}
               </span>
-              <span className="text-[10px] text-slate-500">
+              <span className="text-xs text-slate-600">
                 {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior person-months
               </span>
             </div>
 
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Code Health Grade</span>
+              <span className="text-xs uppercase font-bold text-slate-500 block">Code Health Grade</span>
               <div className="flex items-center gap-2 mt-1">
                 <span className={`text-xl font-black font-serif px-2 py-0.5 rounded border ${gradeColors.bg} ${gradeColors.text} ${gradeColors.border}`}>
                   {report.grade}
                 </span>
                 <span className="text-xs font-bold text-slate-700">{report.codeHealth.modularityScore}/100 Modularity</span>
               </div>
-              <span className="text-[10px] text-slate-500">{report.codeHealth.technicalDebtDiscountPercent}% Tech Debt Discount</span>
+              <span className="text-xs text-slate-600">{report.codeHealth.technicalDebtDiscountPercent}% Tech Debt Discount</span>
             </div>
 
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Moat Defensibility</span>
+              <span className="text-xs uppercase font-bold text-slate-500 block">Moat Defensibility</span>
               <span className="text-2xl font-black text-emerald-800 font-serif block mt-1">
                 {report.valuationBreakdown.defensibilityMoatScore}/100
               </span>
-              <span className="text-[10px] text-emerald-700 font-semibold">Strong IP Protection</span>
+              <span className="text-xs text-emerald-800 font-semibold">Strong IP Protection</span>
             </div>
           </div>
 
           {/* Section 1: Executive Summary & Thesis */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+            <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
               1. Executive Summary & Investment Thesis
             </h3>
-            <p className="text-xs text-slate-700 leading-relaxed font-sans">
+            <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-sans">
               {report.executiveSummary}
             </p>
           </div>
 
           {/* Section 1.5: Transaction Horizons & Valuation Framework */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+            <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
               1.1 Transaction Structuring & Valuation Horizons
             </h3>
-            <p className="text-xs text-slate-600">
+            <p className="text-sm text-slate-700 leading-relaxed">
               Institutional due-diligence appraisal recognizes four distinct economic perspectives depending on the buyer or investor transaction model:
             </p>
             <div className="overflow-x-auto border border-slate-200 rounded-xl">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 font-mono text-[10px] text-slate-500 uppercase">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-slate-50 border-b border-slate-200 font-mono text-xs text-slate-600 uppercase">
                   <tr>
                     <th className="p-3">Transaction Horizon</th>
                     <th className="p-3">Appraised Benchmark</th>
@@ -667,11 +864,11 @@ export default function ReportDetailPage() {
                   <tr>
                     <td className="p-3 font-bold text-slate-900">
                       Codebase Asset Buyout (M&A)
-                      <span className="block text-[10px] font-normal text-slate-500">100% IP, domain, and Git source transfer</span>
+                      <span className="block text-xs font-normal text-slate-500">100% IP, domain, and Git source transfer</span>
                     </td>
                     <td className="p-3 font-bold text-emerald-800 font-serif">
                       {formatCurrency(horizons.privateMaCashBuyout.recommended)}
-                      <span className="block text-[10px] font-normal text-slate-500">Fair Market Asset Price</span>
+                      <span className="block text-xs font-normal text-slate-500">Fair Market Asset Price</span>
                     </td>
                     <td className="p-3 text-slate-700">100% Cash / Stripe Escrow</td>
                     <td className="p-3 text-slate-600">Micro-PE, Syndicates, Indie Acquirers</td>
@@ -679,11 +876,11 @@ export default function ReportDetailPage() {
                   <tr>
                     <td className="p-3 font-bold text-slate-900">
                       Venture Angel SAFE Round
-                      <span className="block text-[10px] font-normal text-slate-500">Forward-looking pre-seed equity round</span>
+                      <span className="block text-xs font-normal text-slate-500">Forward-looking pre-seed equity round</span>
                     </td>
                     <td className="p-3 font-bold text-amber-900 font-serif">
                       {formatCurrency(horizons.venturePreSeedSafeCap.recommendedCap)} Cap
-                      <span className="block text-[10px] font-normal text-slate-500">${formatCurrency(horizons.venturePreSeedSafeCap.suggestedRaiseAmount)} check (~{horizons.venturePreSeedSafeCap.impliedDilutionPercent}%)</span>
+                      <span className="block text-xs font-normal text-slate-500">${formatCurrency(horizons.venturePreSeedSafeCap.suggestedRaiseAmount)} check (~{horizons.venturePreSeedSafeCap.impliedDilutionPercent}%)</span>
                     </td>
                     <td className="p-3 text-slate-700">YC Post-Money SAFE (20% Disc.)</td>
                     <td className="p-3 text-slate-600">Angel Investors & Pre-Seed Accelerators</td>
@@ -691,11 +888,11 @@ export default function ReportDetailPage() {
                   <tr>
                     <td className="p-3 font-bold text-slate-900">
                       Engineering Replacement Floor
-                      <span className="block text-[10px] font-normal text-slate-500">Cost to recreate codebase from scratch</span>
+                      <span className="block text-xs font-normal text-slate-500">Cost to recreate codebase from scratch</span>
                     </td>
                     <td className="p-3 font-bold text-slate-800 font-serif">
                       {formatCurrency(horizons.assetReplacementFloor)}
-                      <span className="block text-[10px] font-normal text-slate-500">{report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior dev-months</span>
+                      <span className="block text-xs font-normal text-slate-500">{report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior dev-months</span>
                     </td>
                     <td className="p-3 text-slate-700">Labor Cost Benchmark</td>
                     <td className="p-3 text-slate-600">Chief Technology Officers & Technical Buyers</td>
@@ -703,11 +900,11 @@ export default function ReportDetailPage() {
                   <tr>
                     <td className="p-3 font-bold text-slate-900">
                       Strategic Corporate Synergy
-                      <span className="block text-[10px] font-normal text-slate-500">Value to incumbent with pre-built distribution</span>
+                      <span className="block text-xs font-normal text-slate-500">Value to incumbent with pre-built distribution</span>
                     </td>
                     <td className="p-3 font-bold text-purple-900 font-serif">
                       {formatCurrency(horizons.strategicCorporateSynergy.estimatedValue)}
-                      <span className="block text-[10px] font-normal text-slate-500">{horizons.strategicCorporateSynergy.synergyMultiple}x Synergy Multiple</span>
+                      <span className="block text-xs font-normal text-slate-500">{horizons.strategicCorporateSynergy.synergyMultiple}x Synergy Multiple</span>
                     </td>
                     <td className="p-3 text-slate-700">Corporate Stock / Cash Merger</td>
                     <td className="p-3 text-slate-600">Enterprise Operators & Strategic Competitors</td>
@@ -719,20 +916,20 @@ export default function ReportDetailPage() {
 
           {/* Section 2: Codebase Replacement Cost & Architecture */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+            <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
               2. Technical Architecture & Engineering Replacement Value
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-700 leading-relaxed">
               {report.architectureSummary}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {report.valuationBreakdown.costToRebuild.layers?.map((layer, idx) => (
-                <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
+                <div key={idx} className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 text-sm">
                   <div className="flex justify-between font-bold text-slate-900">
                     <span>{layer.layerName}</span>
                     <span className="font-serif">{formatCurrency(layer.cost)}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-1">{layer.description}</p>
+                  <p className="text-xs text-slate-600 mt-1">{layer.description}</p>
                 </div>
               ))}
             </div>
@@ -740,47 +937,47 @@ export default function ReportDetailPage() {
 
           {/* Section 3: Marketing Replacement Equity & Traction */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+            <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
               3. Marketing Replacement Equity & User Economics
             </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs sm:text-sm">
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">User Base Equity</span>
+                <span className="text-xs text-slate-500 uppercase font-bold block">User Base Equity</span>
                 <span className="text-base font-bold text-slate-900 font-serif">
                   {formatCurrency(report.valuationBreakdown.marketingReplacement.userAcquisitionReplacement)}
                 </span>
-                <span className="text-[10px] text-slate-500 block">{formatNumber(report.registeredUsers)} active users</span>
+                <span className="text-xs text-slate-600 block">{formatNumber(report.registeredUsers)} active users</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Organic SEO Equity</span>
+                <span className="text-xs text-slate-500 uppercase font-bold block">Organic SEO Equity</span>
                 <span className="text-base font-bold text-slate-900 font-serif">
                   {formatCurrency(report.valuationBreakdown.marketingReplacement.organicSeoDomainEquity)}
                 </span>
-                <span className="text-[10px] text-slate-500 block">Domain age & backlinks</span>
+                <span className="text-xs text-slate-600 block">Domain age & backlinks</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Monthly Revenue</span>
+                <span className="text-xs text-slate-500 uppercase font-bold block">Monthly Revenue</span>
                 <span className="text-base font-bold text-slate-900 font-serif">
                   {report.monthlyRecurringRevenue > 0 ? `${formatCurrency(report.monthlyRecurringRevenue)}/mo` : "$0 (Pre-Rev)"}
                 </span>
-                <span className="text-[10px] text-slate-500 block">{report.monthlyGrowthRate}% MoM Growth</span>
+                <span className="text-xs text-slate-600 block">{report.monthlyGrowthRate}% MoM Growth</span>
               </div>
               <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <span className="text-[10px] text-slate-400 uppercase font-bold block">Total Marketing Value</span>
+                <span className="text-xs text-slate-500 uppercase font-bold block">Total Marketing Value</span>
                 <span className="text-base font-bold text-emerald-800 font-serif">
                   {formatCurrency(report.valuationBreakdown.marketingReplacement.totalMarketingReplacement)}
                 </span>
-                <span className="text-[10px] text-emerald-700 font-semibold block">Combined Asset Equity</span>
+                <span className="text-xs text-emerald-800 font-semibold block">Combined Asset Equity</span>
               </div>
             </div>
           </div>
 
           {/* Section 4: Acquisition Deliverables & Transition */}
           <div className="space-y-3">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
+            <h3 className="text-base font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-1">
               4. Included Acquisition Assets & Founder Handover
             </h3>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm text-slate-700">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Full Git Source Code & Intellectual Property Assignment</span>
@@ -812,10 +1009,10 @@ export default function ReportDetailPage() {
           <div className="pt-6 border-t-2 border-slate-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs font-mono text-slate-500">
             <div>
               <span>VERIFICATION CHECKSUM: {report.certificate.sha256Hash}</span>
-              <span className="block text-[10px] text-slate-400 mt-0.5">ISSUED BY AIAPPS INSTITUTE ACCREDITATION BOARD</span>
+              <span className="block text-xs text-slate-500 mt-0.5">ISSUED BY AIAPPS INSTITUTE ACCREDITATION BOARD</span>
             </div>
             <div className="shrink-0 text-right">
-              <span className="font-bold text-slate-900">ACCREDITATION SEAL: {report.certificate.certificateId}</span>
+              <span className="font-bold text-slate-900 text-sm">ACCREDITATION SEAL: {report.certificate.certificateId}</span>
             </div>
           </div>
         </div>
@@ -825,8 +1022,8 @@ export default function ReportDetailPage() {
       {activeTab === "rebuildLayers" && (
         <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-subtle space-y-6">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Layer-by-Layer Code Replacement Math</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-xl font-bold text-slate-900">Layer-by-Layer Code Replacement Math</h3>
+            <p className="text-sm text-slate-600 mt-1">
               Total baseline calculated at {report.valuationBreakdown.costToRebuild.estimatedPersonMonths} senior person-months (${formatCurrency(report.valuationBreakdown.costToRebuild.totalRebuildCost)}) at ${report.valuationBreakdown.costToRebuild.hourlySeniorDevRate}/hr.
             </p>
           </div>
@@ -835,15 +1032,15 @@ export default function ReportDetailPage() {
             {report.valuationBreakdown.costToRebuild.layers?.map((layer, idx) => (
               <div
                 key={idx}
-                className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs"
+                className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm"
               >
                 <div className="space-y-1">
-                  <span className="font-bold text-slate-900 text-sm">{layer.layerName}</span>
-                  <p className="text-slate-500 max-w-md">{layer.description}</p>
+                  <span className="font-bold text-slate-900 text-base">{layer.layerName}</span>
+                  <p className="text-slate-600 max-w-md">{layer.description}</p>
                 </div>
                 <div className="text-left sm:text-right shrink-0">
-                  <span className="font-bold text-slate-900 text-sm font-serif block">{formatCurrency(layer.cost)}</span>
-                  <span className="text-slate-400">{layer.personMonths} Person-Months</span>
+                  <span className="font-bold text-slate-900 text-base font-serif block">{formatCurrency(layer.cost)}</span>
+                  <span className="text-xs font-mono text-slate-500">{layer.personMonths} Person-Months</span>
                 </div>
               </div>
             ))}
@@ -855,40 +1052,40 @@ export default function ReportDetailPage() {
       {activeTab === "marketing" && (
         <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-subtle space-y-6">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Marketing & Go-To-Market Replacement Cost</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-xl font-bold text-slate-900">Marketing & Go-To-Market Replacement Cost</h3>
+            <p className="text-sm text-slate-600 mt-1">
               Assesses the capital required for a buyer to re-acquire the user base, organic search rankings, and brand equity.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">User Acquisition Replacement</span>
+              <span className="text-xs uppercase font-bold text-slate-500 block">User Acquisition Replacement</span>
               <span className="text-xl font-bold text-slate-900 mt-1 block">
                 {formatCurrency(report.valuationBreakdown.marketingReplacement?.userAcquisitionReplacement || 0)}
               </span>
-              <span className="text-xs text-slate-400">{report.registeredUsers} Users @ Industry CAC</span>
+              <span className="text-xs text-slate-600 font-medium">{report.registeredUsers} Users @ Industry CAC</span>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Organic SEO & Domain Equity</span>
+              <span className="text-xs uppercase font-bold text-slate-500 block">Organic SEO & Domain Equity</span>
               <span className="text-xl font-bold text-slate-900 mt-1 block">
                 {formatCurrency(report.valuationBreakdown.marketingReplacement?.organicSeoDomainEquity || 0)}
               </span>
-              <span className="text-xs text-slate-400">Backlinks & Search Authority</span>
+              <span className="text-xs text-slate-600 font-medium">Backlinks & Search Authority</span>
             </div>
 
             <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
-              <span className="text-[10px] uppercase font-bold text-purple-700 block">Total Marketing Equity</span>
+              <span className="text-xs uppercase font-bold text-purple-800 block">Total Marketing Equity</span>
               <span className="text-xl font-black text-purple-900 font-serif mt-1 block">
                 {formatCurrency(report.valuationBreakdown.marketingReplacement?.totalMarketingReplacement || 0)}
               </span>
-              <span className="text-xs text-purple-600">Saved buyer marketing spend</span>
+              <span className="text-xs text-purple-700 font-semibold">Saved buyer marketing spend</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
-            <strong>GTM Assessor Rationale: </strong>
+          <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed">
+            <strong className="text-slate-900 font-bold">GTM Assessor Rationale: </strong>
             {report.valuationBreakdown.marketingReplacement?.rationale}
           </div>
         </div>
@@ -898,18 +1095,18 @@ export default function ReportDetailPage() {
       {activeTab === "competition" && (
         <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-subtle space-y-6">
           <div>
-            <h3 className="text-lg font-bold text-slate-900">Competitive Landscape & Moat Audit</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-xl font-bold text-slate-900">Competitive Landscape & Moat Audit</h3>
+            <p className="text-sm text-slate-600 mt-1">
               Evaluation of established market leaders vs. emerging indie AI alternatives.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-800">
                 Established Incumbents (Absorption Threat)
               </h4>
-              <ul className="space-y-2 text-xs text-slate-600">
+              <ul className="space-y-2 text-sm text-slate-700">
                 {report.valuationBreakdown.competitiveAudit?.establishedIncumbents.map((inc, i) => (
                   <li key={i} className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-slate-400"></span>
@@ -920,10 +1117,10 @@ export default function ReportDetailPage() {
             </div>
 
             <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-800">
                 Emerging Rivals (Price War & Clone Risk)
               </h4>
-              <ul className="space-y-2 text-xs text-slate-600">
+              <ul className="space-y-2 text-sm text-slate-700">
                 {report.valuationBreakdown.competitiveAudit?.emergingRivals.map((riv, i) => (
                   <li key={i} className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -936,18 +1133,18 @@ export default function ReportDetailPage() {
 
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
             <div>
-              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Moat Defensibility Score</span>
+              <span className="text-xs uppercase font-bold text-emerald-800 block">Moat Defensibility Score</span>
               <span className="text-2xl font-black text-emerald-900 font-serif">
                 {report.valuationBreakdown.competitiveAudit?.moatDefensibilityScore} / 100
               </span>
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded bg-emerald-100 text-emerald-800">
+            <span className="text-sm font-bold px-3 py-1.5 rounded bg-emerald-100 text-emerald-900">
               {report.valuationBreakdown.competitiveAudit?.threatLevel} Threat Profile
             </span>
           </div>
 
-          <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
-            <strong>Differentiation Rationale: </strong>
+          <div className="p-5 rounded-lg bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed">
+            <strong className="text-slate-900 font-bold">Differentiation Rationale: </strong>
             {report.valuationBreakdown.competitiveAudit?.differentiationAnalysis}
           </div>
         </div>
@@ -958,18 +1155,18 @@ export default function ReportDetailPage() {
         <div className="bg-white p-6 sm:p-8 rounded-xl border border-slate-200 shadow-subtle space-y-8">
           <div className="border-b border-slate-100 pb-4 flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Dynamic Valuation Sensitivity Simulator</h3>
-              <p className="text-xs text-slate-500">
+              <h3 className="text-xl font-bold text-slate-900">Dynamic Valuation Sensitivity Simulator</h3>
+              <p className="text-sm text-slate-600 mt-1">
                 Adjust key commercial and operational variables to stress-test the fair market valuation in real-time.
               </p>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-bold text-slate-400 uppercase block">Simulated Valuation</span>
-              <span className="text-2xl font-black text-slate-900 font-serif">{formatCurrency(simValuation)}</span>
+              <span className="text-xs font-bold text-slate-500 uppercase block">Simulated Valuation</span>
+              <span className="text-2xl sm:text-3xl font-black text-slate-900 font-serif">{formatCurrency(simValuation)}</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="font-bold text-slate-700">Monthly Recurring Revenue (MRR)</span>
@@ -1035,14 +1232,14 @@ export default function ReportDetailPage() {
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm">
             <div>
               <span className="font-bold text-slate-900 block">Baseline vs. Simulated Delta</span>
-              <span className="text-slate-500">
+              <span className="text-slate-600">
                 Certified Baseline: {formatCurrency(report.valuationFairMarket)} &rarr; Simulated: {formatCurrency(simValuation)}
               </span>
             </div>
-            <span className={`font-bold font-serif text-sm ${simValuation >= report.valuationFairMarket ? "text-emerald-700" : "text-rose-700"}`}>
+            <span className={`font-bold font-serif text-base ${simValuation >= report.valuationFairMarket ? "text-emerald-700" : "text-rose-700"}`}>
               {simValuation >= report.valuationFairMarket ? "+" : ""}
               {formatCurrency(simValuation - report.valuationFairMarket)} Delta
             </span>
